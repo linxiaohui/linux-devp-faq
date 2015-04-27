@@ -23,4 +23,4 @@ lsof -p _pid_ | awk 'BEGIN {n=0} $4~/[0-9].*/ {n=n+1} END {print n}'
 
 ## 关于/proc文件系统
 `man 5 proc`   
-重点关注 `/proc/<pid>/status`, `/proc/<pid>/maps`
+重点关注 `/proc/_pid_/status`, `/proc/_pid_/maps`

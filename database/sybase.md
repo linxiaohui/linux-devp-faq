@@ -6,7 +6,7 @@
 ct__string_extended_encryption: user api layer: internal common library error: 
 Client password encryption fails.
 ```
-问题是在 OCS-15_0的lib3p，将其 LD_LIBRARY_PATH下问题解决
+问题是在 OCS-15_0的lib3p，将其配置到LD_LIBRARY_PATH中问题解决
 
 ## 关于sybase的locale
 linux下 locale设置为 zh_CN.gbk后，sybase的 isql 报错

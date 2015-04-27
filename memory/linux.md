@@ -1,8 +1,7 @@
-# Linux提供的内存相关的技术
+# Linux中内存相关命令与配置
 
 ## 查看进程内存使用情况
-   * top命令
-`top -d 1 -p pid [,pid ...]  //设置为delay 1s，默认是delay 3s`
+   * `top -d 1 -p pid [,pid ...]`  //设置为delay 1s，默认是delay 3s   
 如果想根据内存使用量进行排序，可以shift + m（Sort by memory usage）
    * pmap
    * ps
@@ -23,22 +22,25 @@ optimistic memory allocation stategy
 * /proc/_pid_/oom_adj
    * oom_adj的值越大，该进程被系统选中终止的可能就越高，当oom_adj=-17时oom_score将变为0
    
-Linux 提供了这样一个参数min_free_kbytes，用来确定系统开始回收内存的阈值，控制系统的空闲内存。值越高，内核越早开始回收内存，空闲内存越高。
+Linux 提供了这样一个参数min_free_kbytes，用来确定系统开始回收内存的阈值，控制系统的空闲内存。
+值越高，内核越早开始回收内存，空闲内存越高。   
 `echo 963840 > /proc/sys/vm/min_free_kbytes` 
 
-可以通过修改内核参数禁止OOM机制
+可以通过修改内核参数禁止OOM机制   
 `sysctl -w vm.panic_on_oom=1`
-`vm.panic_on_oom = 1 //1表示关闭，默认为0表示开启OOM`
+`vm.panic_on_oom = 1` //1表示关闭，默认为0表示开启OOM
 `sysctl -p`
 
 ## 关于free
-free -m的结果可以用下图描述：
- 
-![free -m](./free.png "free -m")
-
+`Memory=Used+Free+Buffer+Cache`   
+free -m的结果可以用下面的公式表示  
+```
+Mem:               used=Used+Buffer+Cache / free=Free 
+-/+buffers/cache:  used=Used/free=Free+Buffer+Cache
+```
 
 ## 清空cache:  
-`sudo sysctl vm.drop_caches=3 释放buffer+cache`   
+`sudo sysctl vm.drop_caches=3 `释放buffer+cache   
 `echo 1 > /proc/sys/vm/drop_caches`   
 
 ## 内核空间的内存 

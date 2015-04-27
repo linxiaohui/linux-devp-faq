@@ -4,30 +4,27 @@
 `gcc -fpic -shared`  
   * -fpic 使输出的对象模块是按照可重定位地址方式生成的
   * -fpie和 -fPIE与 -fpic及 -fPIC的用法很相似，区别在于前者总是将生成的位置无关代码看作是属于程序本身，并直接链接进该可执行程序，而非存入全局偏移表 GOT中。    
-*备注*: `man gcc`: -fpic、-fPIC、-fpie、-fPIE  
+
+**备注**: `man gcc`: -fpic、-fPIC、-fpie、-fPIE  
 
 ## 使用动态库
-链接时`-ldl`生成的对象模块需要使用共享库
+若生成的对象模块需要使用共享库，链接时使用参数`-ldl`   
    * dlopen(char \* filename, int flag)    
-*filename*：指定共享库的名称，将会在下面位置查找指定的共享库:
+filename: 指定共享库的名称。将会在下面位置查找指定的共享库:
        * 环境变量LD_LIBRARY_PATH列出的用分号间隔的所有目录;
        * 编译时加入-rpath连接选项（-Wl,-rpath,./），这个选项指定生成的ELF的RUNPATH
-       * readelf -d xxxx.so
-       * 文件/etc/ld.so.cache中找到的库的列表，用户通过/etc/ld.so.conf中添加路径，然后执行ldconfig构建字典 /etc/ld.so.cache;
-       * 目录/lib;
-       * 目录/usr/lib;
-       * 当前目录;    
-*flag*：指定如何打开共享库。
-       * RTLD_NOW：将共享库中的所有函数加载到内存
-       * RTLD_LAZY：会推后共享库中的函数的加载操作，直到调用dlsym时方加载某函数
-       * RTLD_DEEPBIND
+           * `readelf -d xxxx.so`
+       * 文件`/etc/ld.so.cache`中找到的库的列表
+           * 通过`/etc/ld.so.conf`中添加路径，然后执行`ldconfig`构建`/etc/ld.so.cache`
+       * 系统目录
+       * 当前目录
    * dlsym(void \*phandle, char \* funcname)   
        调用dlsym时，使用dlopen返回的共享库的phandle以及函数名称作为参数，返回要加载函数的入口地址。
        指定的phandle里没有，则在phandle自动加载的so中找。
    * dlclose()   
        如果dlopen了一个so后，cp -f了这个so，dlclose的时候进程会coredump。
    * dlerror()   
-       该函数用于检查调用共享库的相关函数出现的错误，上一次错误，不能重复调用。
+       该函数用于检查调用共享库的相关函数出现的上一次错误（因此不能重复调用）。
 
 **备注**:    
    * ld.so和ld-linux.so 负责加载需要使用的动态库。
@@ -39,8 +36,6 @@
    * -z nodefaultlib编译选项禁止搜索缺省路径。
    * 使用 ld -verbose | grep -I search 查看so查找路径。
 
-
-
 ##动态库so的更新
    * Linux中 cp mv rm ln 命令对于 inode 和 dentry 的影响
        * inode （索引节点），包含文件的大部分信息：
@@ -49,10 +44,10 @@
            * 文件的Group ID
            * 文件的读、写、执行权限
            * 文件的时间戳
-               * ctime指inode上一次变动的时间
-               * mtime指文件内容上一次变动的时间
-               * atime指文件上一次打开的时间。
-           * 链接数，即有多少目录项指向这个inode
+               * ctime:inode上一次变动的时间
+               * mtime:文件内容上一次变动的时间
+               * atime:文件上一次打开的时间。
+           * 链接数:有多少目录项指向这个inode
            * 文件数据block的位置
        * 通过stat命令可以查看文件inode。
        * dentry （宏目录项）
@@ -93,31 +88,35 @@ open("libx1.so", O_RDONLY)=3
 fstat(3, {st_mode=S_OFREG|0755, st_size=..........} ) =0
 open("libx2.so", O_WDONLY|O_TRUNC )=4
 ```
-可以看到原so被trunc了，具体的的说：
-      1. 应用程序通过dlopen打开so的时候，kernel通过mmap把so加载到进程地址空间，对应于vma里的几个page.
-      2. 在这个过程中loader会把so里面引用的外部符号例如malloc printf等解析成真正的虚存地址。
-      3. 当so被cp覆盖时，确切地说是被trunc时，kernel会把so文件在虚拟内的页purge 掉。
-      4. 当运行到so里面的代码时，因为物理内存中不再有实际的数据（仅存在于虚存空间内），会产生一次缺页中断。
-      5. Kernel从so文件中copy一份到内存中去,a)但是这时的全局符号表并没有经过解析，当调用到时就产生segment fault ,  b)如果需要的文件偏移大于新的so的地址范围，就会产生bus error.
-所以，如果用相同的so去覆盖
-      A) 如果so 里面依赖了外部符号，coredump
-      B) 如果so里面没有依赖外部符号，不会coredump
-所有问题的产生都是因为so被trunc了一把，所以如果不用turnc的方式就避免这个问题。
 
-   * install的方式更新so
+关于动态库    
+   1. 应用程序通过dlopen打开so的时候，kernel通过mmap把so加载到进程地址空间，对应于vma里的page。
+   2. 在这个过程中loader会把so里面引用的外部符号(例如`malloc` `printf`等)解析成真正的虚存地址。
+   3. 当so被cp trunc时，kernel会把so文件在虚拟内的页purge掉
+   4. 当运行到so里面的代码时，因为物理内存中不再有实际的数据（仅存在于虚存空间内），会产生一次缺页中断。
+   5. Kernel从so文件中copy一份到内存中去
+       * 全局符号表并没有经过解析，当调用到时就产生segment fault
+       * 如果需要的文件偏移大于新的so的地址范围，就会产生SIGBUS信号.
+所以，如果用相同的so去覆盖
+    * 如果so里面依赖了外部符号，coredump
+    * 如果so里面没有依赖外部符号，不会coredump
+
+上面的问题由于复制so时so被trunc了，因此如果不用turnc的方式就避免这个问题。
+   * install的方式更新so    
 `strace install new.so old.so`    
+其系统调用如下
 ```c
 unlink("libx2.so")
 open("libx1.so", O_RDONLY)=3
 fstat(3, {st_mode=S_OFREG|0755, st_size=..........} ) =0
 open("libx2.so", O_WDONLY|O_CREAT|O_EXCL, 0755)=4
 ```
-
-install 的方式跟cp不同，先unlink再creat，当unlink的时候，已经map的虚拟空间vma中的inode结点没有变，
-只有inode结点的引用计数为0是，kernel才把它干掉。
-也就是新的so和旧的so用的不是同一个inode结点，所以不会相互影响。这时只有得启程序才会使用到新的so。
-所以采用这种方式的话就可以避免先stop进程，更新so，再重启进程这样比较耗时的操作。
+   * 先unlink再creat
+   * unlink的时候，已经map的虚拟空间vma中的inode结点没有变(新的so和旧的so用的不是同一个inode结点)
+   * 只有inode结点的引用计数为0时，kernel才将其删除。
+   * 只有得启进程才会使用到新的so。
 
 **备注**：   
-不trunc更新文件 `dd conv=notrunc`
+不修改inode不trunc更新文件的一种方式 `dd conv=notrunc`    
+在两个so关系比较明确，引用的外部符号地址不变的情况下时，可以考虑使用这种方式不重启进程更新so。
 

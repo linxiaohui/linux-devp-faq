@@ -10,14 +10,12 @@
     * [第三方库](programming/lib.md)
     * [其它工具](programming/tools.md)
     
-* [运行](runtime/README.md)
+* [运行与调试](runtime/README.md)
     * [环境](runtime/env.md)
     * [进程检查](runtime/pcheck.md)
     * [关于coredump](runtime/core.md)
-    
-* [调试](debug/README.md)
-    * [gdb](debug/gdb.md)
-    * [函数调用关系](debug/func.md)
+    * [gdb](runtime/gdb.md)
+    * [函数调用关系](runtime/func.md)
 
 * [内存](memory/README.md)
     * [操作系统命令](memory/linux.md)

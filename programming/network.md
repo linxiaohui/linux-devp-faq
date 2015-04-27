@@ -16,7 +16,13 @@ setbuf(cout, (char *)0);
    * 在断开socket连接前，需要先执行fclose(cin); fclose(cout); 再执行close(sockfd)
 
 
-## 关于send返回值，对方listen，没accept
+## 关于send返回值
+进程间通过socket通信，一个进程执行`listen`后，即使没有执行`accept`，对方进程`connect`也会成功，
+并且`send`也会成功。该进程之后执行`accept`和`read`也都正常。
+
+一个可能的解释是：操作系统内核负责socket数据的发送和接收以及维护TCP连接的状态；
+上例中对方进程实际上已经将socket数据发送给了接收进程的操作系统内核。
+
 
 ## 如何获得信息
-man tcp
+`man tcp`

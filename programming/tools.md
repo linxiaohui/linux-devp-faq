@@ -1,11 +1,12 @@
 #工具
 
 ## Clang Static Analyzer
-Clang Static Analyzer代码静态检查工具，是 clang 编译器的一部分
+代码静态检查工具，是 clang 编译器的一部分
 
 ## google-perftools
-google-perftool是由google开发的用来分析C/C++程序性能的一套工具，主要包括内存和CPU 两个方面.
-内存分析使用google-perftool所提供的tcmalloc，CPU分析使用它所提供的profiler。
+google-perftool是由google开发的用来分析C/C++程序性能的一套工具，主要包括内存和CPU 两个方面
+   * 内存分析使用google-perftool所提供的tcmalloc
+   * CPU分析使用它所提供的profiler
 
 tcmalloc(thread cache malloc) 的主要优点有
    * 内存allocate/deallocate的速度，通常情况下它的速度比glibc所提供的 malloc要快
@@ -49,62 +50,38 @@ google-perftoolg还提供了一个叫 pprof的工具，它是一个perl的脚本
 ## gprof
 GNU 编译器工具包所提供了一种剖析工具 GNU profiler（gprof）。
 gprof 可以为 Linux平台上的程序精确分析性能瓶颈。gprof精确地给出函数被调用的时间和次数，给出函数调用关系。
-   1. 可以显示“flat profile”，包括每个函数的调用次数，每个函数消耗的处理器时间，
-   2. 可以显示“Call graph”，包括函数的调用关系，每个函数调用花费了多少时间。
-   3. 可以显示“注释的源代码”－－是程序源代码的一个复本，标记有程序中每行代码的执行次数。
+   1. 可以显示"flat profile"，包括每个函数的调用次数，每个函数消耗的处理器时间，
+   2. 可以显示"Call graph"，包括函数的调用关系，每个函数调用花费了多少时间。
+   3. 可以显示"注释的源代码"－－是程序源代码的一个复本，标记有程序中每行代码的执行次数。
 
 * 原理：  
 通过在编译和链接程序的时候（使用 -pg 编译和链接选项），
-gcc 在应用程序的每个函数中都加入了一个名为mcount ( or  “_mcount”  , or  “__mcount” , 依赖于编译器或操作系统)的函数，
-也就是说你的应用程序里的每一个函数都会调用mcount, 而mcount 会在内存中保存一张函数调用图，
+gcc 在应用程序的每个函数中都加入了一个名为mcount的函数调用，而mcount会在内存中保存一张函数调用图，
 并通过函数调用堆栈的形式查找子函数和父函数的地址。这张调用图也保存了所有与函数相关的调用时间，调用次数等等的所有信息。
-在编译和链接时加上-pg选项，运行程序后在程序运行目录下生成 gmon.out文件（如果原来有gmon.out 文件，将会被重写）。
-用 gprof 工具分析 gmon.out 文件。
+运行程序后在程序运行目录下生成 gmon.out文件（如果原来有gmon.out 文件，将会被重写）。
 
-一般用法： `gprof –b 二进制程序 gmon.out >report.txt`
-注：`export GMON_OUT_PREFIX=x.out` 生成的文件名形如x.out.<进程的pid>
-
-* 报告说明
-gprof 产生的信息解释：
-  %time	Cumulative
-seconds	Self 
-Seconds	Calls	Self
-TS/call	Total
-TS/call	name
-该函数消耗时间占程序所有时间百分比	程序的累积执行时间
-（只是包括gprof能够监控到的函数）	该函数本身执行时间
-（所有被调用次数的合共时间）	函数被调用次数	函数平均执行时间
-（不包括被调用时间）
-（函数的单次执行时间）	函数平均执行时间
-（包括被调用时间）
-（函数的单次执行时间）	函数名
-Call Graph 的字段含义：
-Index	%time	Self	Children	Called	Name
-索引值	函数消耗时间占所有时间百分比	函数本身执行时间	执行子函数所用时间	被调用次数	函数名
+用 gprof 工具分析 gmon.out 文件。   
+一般用法：
+   `gprof –b 二进制程序 gmon.out >report.txt`    
+注：`export GMON_OUT_PREFIX=x.out` 生成的文件名形如x.out.<进程的pid>   
+Gprof 的具体参数 `man gprof`
 
 * 注意
-程序的累积执行时间只是包括gprof能够监控到的函数。工作在内核态的函数和没有加-pg编译的第三方库函数是无法被gprof能够监控到的，（如sleep（）等）
-Gprof 的具体参数可以 通过 man gprof 查询。
+程序的累积执行时间只是包括gprof能够监控到的函数。
+工作在内核态的函数和没有加-pg编译的第三方库函数是无法被gprof能够监控到的
 
 * 共享库的支持
-对于代码剖析的支持是由编译器增加的，因此如果希望从共享库中获得剖析信息，就需要使用 -pg 来编译这些库。提供已经启用代码剖析支持而编译的 C 库版本（libc_p.a）。
-如果需要分析系统函数（如libc库），可以用 –lc_p替换-lc。这样程序会链接libc_p.so或libc_p.a。这非常重要，因为只有这样才能监控到底层的c库函数的执行时间，（例如memcpy()，memset()，sprintf()等）。
-gcc example1.c –pg -lc_p -o example1
-注意要用ldd ./example | grep libc来查看程序链接的是libc.so还是libc_p.so
-
-* 用户时间与内核时间
-gprof 的最大缺陷：它只能分析应用程序在运行过程中所消耗掉的用户时间，无法得到程序内核空间的运行时间。通常来说，应用程序在运行时既要花费一些时间来运行用户代码，也要花费一些时间来运行 “系统代码”，例如内核系统调用sleep()。
-有一个方法可以查看应用程序的运行时间组成，在 time 命令下面执行程序。这个命令会显示一个应用程序的实际运行时间、用户空间运行时间、内核空间运行时间。
-如 time ./program
-输出：
-real    2m30.295s
-user    0m0.000s
-sys     0m0.004s
+对于代码剖析的支持是由编译器增加的，因此如果希望从共享库中获得剖析信息，就需要使用 -pg 来编译这些库。
+如果需要分析系统函数（如libc库），用 –lc_p替换-lc，这样程序会链接libc_p.so或libc_p.a。   
+用`ldd ./example | grep libc`来查看程序链接的是libc.so还是libc_p.so
 
 **注意事项** 
-   1. g++在编译和链接两个过程，都要使用-pg选项。
-   2. 只能使用静态连接libc库，否则在初始化*.so之前就调用profile代码会引起“segmentation fault”，解决办法是编译时加上-static-libgcc或-static。
-   3. 如果不用g++而使用ld直接链接程序，要加上链接文件/lib/gcrt0.o，如ld -o myprog /lib/gcrt0.o myprog.o utils.o -lc_p。也可能是gcrt1.o
+   1. 在编译和链接两个过程，都要使用-pg选项。
+   2. 只能使用静态连接libc库，否则在初始化*.so之前就调用profile代码会引起段错误，
+      * 编译时加上`-static-libgcc`或`-static`。
+   3. 如果不用g++而使用ld直接链接程序，要加上链接文件/lib/gcrt0.o
+      * `ld -o myprog /lib/gcrt0.o myprog.o utils.o -lc_p` 
+      * 也可能是gcrt1.o
    4. 要监控到第三方库函数的执行时间，第三方库也必须是添加 –pg 选项编译的。
    5. gprof只能分析应用程序所消耗掉的用户时间.
    6. 程序不能以demon方式运行。否则采集不到时间。（可采集到调用次数）
@@ -119,11 +96,10 @@ sys     0m0.004s
         * 可以使用捕捉信号，在信号处理函数中调用exit的方式来解决部分问题。
         * 不能捕获、忽略SIGPROF信号。man手册对SIGPROF的解释是：profiling timer expired. 如果忽略这个信号，gprof的输出则是：Each sample counts as 0.01 seconds. no time accumulated.
 
-
 ## Coan
 coan可以用来净化C语言中的预编译指令；可以用于阅读源代码时简化误用的代码。    
 例如学习libevent在Linux下实现时可以使用如下命令
-```shell
+```bash
 coan source -D_EVENT_HAVE_SYS_IOCTL_H -D_EVENT_HAVE_NETDB_H -D_EVENT_HAVE_STDDEF_H \ 
 -D_EVENT_HAVE_STDINT_H  -D_EVENT_HAVE_SYS_TIME_H -D_EVENT_HAVE_SYS_TYPES_H -D_EVENT_HAVE_INTTYPES_H \
 -D_EVENT_HAVE_SYS_SOCKET_H -D_EVENT_HAVE_UNISTD_H -D_EVENT_HAVE_SYS_EVENTFD_H -D_EVENT_HAVE_SELECT \

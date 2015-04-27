@@ -1,15 +1,19 @@
 #检查内存的第三方库和工具
 
 ## Electric Fence检测内存越界操作
-Electric Fence 使用虚拟内存技术，在 malloc() 分配到的内存块的前后分别放置一个 不能访问的内存页，
+Electric Fence 使用虚拟内存技术，在 malloc() 分配到的内存块的前后分别放置一个不能访问的内存页，
 当应用程序去读写这两个内存页时硬件会引发段错误。
 * 安装（OpenSUSE中）
-```shell
+```bash
 zypper install ElectricFence
 rpm -ql ElectricFence
 ```
 * 使用
-只要添加链接选项 -lefence 链接 libefence.so，它会在程序运行时预先加载 libefence.so Hook 对 malloc(…) 的调用。也可以不用编译程序而通过设置 PRE_LOAD=/usr/lib64/libefence.so 环境变量 来实现或者直接链接 /usr/lib64/libefence.a。默认情况下 Electric Fence 只会检测 读写越下边界和已释放的内存块的违规操作。Electric Fence 不能与其他 内存检测工具 或者内存分配器使用，因为内存检查工具一般都是通过 hook 内存分配函数来实现内存检测的。
+   * 添加链接选项 -lefence 链接 libefence.so，它会在程序运行时预先加载 libefence.so Hook 对 malloc等的调用。
+   * 不用编译程序而通过设置 PRE_LOAD=/usr/lib64/libefence.so 环境变量
+   * 直接链接 /usr/lib64/libefence.a
+   * 默认情况下 Electric Fence 只会检测读写越下边界和已释放的内存块的违规操作
+   * Electric Fence 不能与其他内存检测工具或者内存分配器使用
 * 环境变量
    * EF_ALIGNMENT 变量控制分配到的内存块的对齐大小，值越小越严格。
    * EF_PROTECT_BELOW=1 时在内存块的之前也添加一个无法访问的内存页。检查访问越过内存块上边界的情况。
@@ -18,12 +22,12 @@ rpm -ql ElectricFence
    * EF_FILL,设置指定的值使 Electric Fence 在分配内存之后 将内存块初始化为此值。
 
 ## DUMA 检测内存违规访问和内存泄漏
-D.U.M.A 的全称是 Detect Unintended Memory Access，它是 Electric Fence 的加强版。
-能定位C++程序内存非法访问的位置，与内存泄露。
-为了收集内存分配的语句所在的位置，DUMA 需要对 malloc() 等函数进行“Hook”，这是用宏实现的，
-所以需要包含头文件`#include <duma.h>`（对C++程序`#include <dumapp.h>`）。并链接 libduma.a 和 pthread 库。例如：
+D.U.M.A(Detect Unintended Memory Access)是 Electric Fence 的加强版, 能定位C++程序内存非法访问的位置与内存泄露。  
+为了收集内存分配的语句所在的位置，DUMA 需要对 malloc() 等函数进行“Hook”，这是用宏实现的.  
+* 需要包含头文件`#include <duma.h>`（对C++程序`#include <dumapp.h>`）
+* 需要链接 libduma.a 和 pthread 库。   
 `g++ -g -O0 heap-corruption.cc -o heapC -Wl,-Bstatic,-lduma -Wl,-Bdynamic –pthread`
-* 环境变量
+* 环境变量   
 DUMA和Electric Fence一样，同样支持通过变量来控制其行为，只不过比Electric Fence要多。常用如下：
    * DUMA_ALIGNMENT ：对应 EF_ALIGNMENT。
    * DUMA_PROTECT_BELOW：对应 EF_PROTECT_BELOW。
@@ -58,7 +62,7 @@ DUMA和Electric Fence一样，同样支持通过变量来控制其行为，只�
 ## 关于 dmalloc的一些使用经验
 * 安装 
 下载dmalloc源代码，执行
-```
+```bash
 ./configure --enable-threads
 make
 make install
@@ -67,7 +71,7 @@ make install
    * dmalloc的源代码中有文件settings.dist，其中有一些宏定义。 例如，将 ALLOW_FREE_NULL_MESSAGE 设置为 0 可以不输出 WARNING .... FREE 0 .... 的警告
    * 把dmalloc安装后的lib路径加入到/etc/ld.so.conf中，然后执行ldconfig -v
    * 在.bashrc, .profile或.zshrc文件中添加
-```shell
+```bash
 function dmalloc { eval `/usr/local/bin/dmalloc -b $*`; }
 ```
 * 使用
@@ -93,8 +97,36 @@ dmalloc_log_changed(mark,1,0,1);
 必须在 #include <stdlib.h> 之后 #include "dmalloc.h" 否则编译会报错
 
 * 根据结果分析数据
- 若在logfile中出现not freed: '0x400177c8|s1047' (20 bytes) from 'ra=0x0x400618' 则说明程序存在内存泄露；
- 定位内存泄露代码行数（使用命令readelf nm ldd）
+若在logfile中出现
+```
+not freed: '0x400177c8|s1047' (20 bytes) from 'ra=0x0x400618'
+```
+则说明程序存在内存泄露；
+ 
 备注:
-环境变量  DMALLOC_OPTIONS=log=/path/logfile,debug=0x.......
-使用 `dmalloc -DV` 可以显示各个参数的意义
+   * 环境变量  DMALLOC_OPTIONS=log=/path/logfile,debug=0x.......
+   * 使用 `dmalloc -DV` 可以显示各个参数的意义
+
+## 定位内存泄露代码所在行
+使用**addr2line**
+```bash
+#/bin/sh
+loc=$1
+echo "loc=$loc"
+lib=$(echo $loc | awk -F[+\(\)] '{print $1}')
+func=$(echo $loc | awk -F[+\(\)] '{print $2}')
+offset=$(echo $loc | awk -F[+\(\)] '{print $3}')
+echo "lib=$lib"
+echo "func=$func"
+echo "offset=$offset"
+echo "FIND FUNC $(nm $lib | grep -w $func)"
+base=$(nm $lib | grep -w $func | awk '{print $1}')
+echo $base
+let b=0x$base
+let o=offset
+let x=b+o-1
+echo $x
+addr=$(echo "obase=16;$x" | bc)
+echo $addr
+addr2line -e $lib 0x$addr
+```

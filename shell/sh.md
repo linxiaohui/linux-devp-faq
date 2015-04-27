@@ -41,6 +41,8 @@ timeout sleep 10
    * C. SUSE coreutils包中有`timeout`命令
 
 ## here document
+here document往往用于需要输出一大段文本的地方, 例如脚本的help函数.
+
 下面一段代码
 ```bash
 grep -v 1 /tmp/test.txt | while read line; do
@@ -49,13 +51,9 @@ grep -v 1 /tmp/test.txt | while read line; do
 done
 echo a:$a
 ```
-执行后有什么问题吗?
-[Sun Nov 04 05:35 AM] [kodango@devops] ~/workspace 
-$ sh test.sh 
---2--
---3--
-a:
-发现a这个变量没有被赋值, 为什么呢? 因为管道后面的代码是在在一个子shell中执行的, 所做的任何更改都不会对当前shell有影响, 自然a这个变量就不会有赋值了.
+执行后可以发现a这个变量没有被赋值。
+
+**因为管道后面的代码是在在一个子shell中执行的, 所做的任何更改都不会对当前shell有影响**，自然a这个变量就不会有赋值了。
 换一种思路, 可以这样做
 ```bash
 grep -v 1 /tmp/test.txt > /tmp/test.tmp
@@ -67,26 +65,34 @@ done < /tmp/test.tmp
 echo a:$a
 rm -f /tmp/test.tmp
 ```
-不过多了一个临时文件, 最后还要删除. 这里其实可以用到here document
+不过多了一个临时文件, 最后还要删除
+
+其实可以用到here document
 ```bash
 while read line2; do
     let b++
-    echo ??$line2??
+    echo --$line2--
 done << EOF
 `grep -v 1 /tmp/test.txt`
 EOF
 echo b: $b
 ```
-here document往往用于需要输出一大段文本的地方, 例如脚本的help函数.
 
 ## 如何调试
-在bash的脚本中，你可以使用 set -x 来debug输出。使用 set -e 来当有错误发生的时候abort执行。
-考虑使用 set -o pipefail 来限制错误。还可以使用trap来截获信号（如截获ctrl+c）
+在bash的脚本中
+   * 以使用 set -x 来debug输出
+   * 使用 set -e 来当有错误发生的时候abort执行
+   * 使用 set -o pipefail 来限制错误
+   * 可以使用trap来截获信号（如截获ctrl+c）
+
+可以直接bash -x _script_ 来执行并打印调试信息
+
 
 ## 函数返回值
 函数的返回值默认是最后一行语句的返回值
 
-## 在bash 脚本中，subshells (写在圆括号里的) 是一个很方便的方式来组合一些命令。
+## subshell
+在bash 脚本中，subshells (写在圆括号里的) 是一个很方便的方式来组合一些命令。
 一个常用的例子是临时地到另一个目录中，例如：
 ```bash
 # do something in current dir
@@ -94,11 +100,14 @@ here document往往用于需要输出一大段文本的地方, 例如脚本的he
 # continue in original dir
 ```
 
-## 通过 <(some command) 可以把某命令当成一个文件。
-例如： 比较一个本地文件和远程文件 /etc/hosts： diff /etc/hosts <(ssh somehost cat /etc/hosts)
+## 把某命令的输出当成一个文件
+通过 <(_commandline_) 可以把某命令当成一个文件。
+例如： 比较一个本地文件和远程文件 /etc/hosts： `diff /etc/hosts <(ssh somehost cat /etc/hosts)`
 
 ## Shell中的多进程
-在命令行下, 我们会在命令行后面加上&符号来让该命令在后台执行, 在shell脚本中, 使用”(cmd)”可以让fork一个子shell来执行该命令. 利用这两点, 可以实现shell的多进程
+   * 在命令行下, 在命令行后面加上&符号来让该命令在后台执行
+   * 在shell脚本中, 使用`(_cmd_)`可以fork一个子shell来执行_cmd_
+利用这两点, 可以实现shell的多进程
 ```bash
 job_num=10
  function do_work()
@@ -115,7 +124,7 @@ echo "All job have been done!"
 注意最后的wait命令, 作用是等待所有子进程结束.
 
 ## bash参数
-bash中-后面的参数不会被当作选项解析.
+bash中--后面的参数不会被当作选项解析.
    
 # 重定向
 ## `1> /dev/null 2>&1`解释

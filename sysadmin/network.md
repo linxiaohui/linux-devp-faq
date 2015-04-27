@@ -3,6 +3,8 @@
 ## 查找占用端口的进程
 * Linux    
 `netstat -anp`
+* FreeBSD  
+`sockstat`  
 * Windows   
 `netstat -ano`
 * AIX
