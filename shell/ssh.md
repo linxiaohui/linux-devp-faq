@@ -50,29 +50,31 @@ if [ -t 255 ]; then INTERACTIVE=1 ; fi
 ## cat file | while read 在执行ssh远程命令的时只能执行一行
 
 * 分析   
-`cat hostlist | while read i ;do sshpass -p 'anything' ssh -l root $i 'date';done`   
+```bash
+cat hostlist | while read i ;do sshpass -p 'anything' ssh -l root $i 'date';done
+```
 while read读取文件里面的内容, 然后执行ssh远程命令时会碰到while read只能对文件里面的第一行执行操作, 之后退出。
 
 * 解决方案
    * 不使用cat, 利用`while read i;do ;done< filename.txt`代替。例如：
 ```bash
-$ while read i;do sshpass -p 'anything' ssh -e '|' -l root $i 'date';done < hostlist
+while read i;do sshpass -p 'anything' ssh -e '|' -l root $i 'date';done < hostlist
 ```
    * 使用for i in $();do;done代替cat | while read。例如：
 ```bash
-$ for i in `cat hostlist`;do sshpass -p 'anything' ssh -l root $i 'date';done
+for i in `cat hostlist`;do sshpass -p 'anything' ssh -l root $i 'date';done
 ```
 
 如果没有文件只有echo返回的值呢？
 
 * 根本原因:
-   * 管道后相当于一个子程序,这里是while子程序.
-   * SSH执行的远程命令则是while子程序的子程序. 相当于while子程序下跑了另一个子程序.
+   * 管道后相当于一个子程序,这里是while子程序。
+   * SSH执行的远程命令则是while子程序的子程序。
    * `while read i;do<COMMANDS>;done<filename.txt`则只是在当前SHELL下开一个SSH子程序
 
 * 解决办法
    * 子程序的子程序SHELL依旧支持,只是在子程序的子程序还没有获得结果的时候,**上一级子程序就已经退出了**.所以只能看到一行的返回结果.
-   * 子程序包在()&里,并且后面跟wait,那么父程序要等到子程序完成后才退出.
+   * 子程序包在()&里,并且后面跟`wait`,那么父程序要等到子程序完成后才退出.
    * 如果()& wait和do...done循环合用的话 &和wait之间不能加分号';'。
 例如：
 ```bash

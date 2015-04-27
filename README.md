@@ -10,4 +10,4 @@ Linux Development FAQs
   本书的描述假定读者有一定的Linux开发基础与经验。希望能对读者学习和工作有参考价值。    
   
   本书将持续更新。     
-  Current VERSION: 0.2 (Revised Draft)
+  Current VERSION: 0.21 (Revised Draft:minor fix)

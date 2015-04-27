@@ -5,7 +5,9 @@
 telnet towel.blinkenlights.nl
 
 ## 
-tr -c "[:digit:]" " " </dev/urandom | dd cbs=$COLUMNS conv=unblock | GREP_COLOR="1;32" grep --color "[^ ]"
+```bash
+tr -c "[:digit:]" " " </dev/urandom|dd cbs=$COLUMNS conv=unblock|GREP_COLOR="1;32" grep --color "[^ ]"
+```
 
 ## fork bomb
 `:(){ :|:& };:`
@@ -18,11 +20,11 @@ tr -c "[:digit:]" " " </dev/urandom | dd cbs=$COLUMNS conv=unblock | GREP_COLOR=
 ;
 :
 ```
-定义了函数名为 : 然后递归发调用fork进程
+定义了函数名为 `:` 然后递归发调用fork进程
 
-备注： 一行命令注意其中 {和:之间有空格
-为了防止fork炸弹，方法就是限制用户能够启动的进程数。具体做法，编辑/etc/security/limits.conf文件，在末尾加入 ：
-* hard nproc 200
-将用户的进程数限制为200
-root账户不受这个限制
+备注:
+   * 一行命令注意其中 {和:之间有空格
+   * 为了防止fork炸弹，方法就是限制用户能够启动的进程数。
+      * 编辑`/etc/security/limits.conf`增加 `* hard nproc 200` 将用户的进程数限制为200
+      * root账户不受这个限制
  
