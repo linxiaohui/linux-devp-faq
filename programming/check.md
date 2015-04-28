@@ -6,10 +6,11 @@
    * 使用nm查看.a里面的.o成员的地址长度也可以判断为32位或64位的
 
 **备注**：    
-`file -i _textfilename_` 可以显示文件的编码方式     
-   * 检查文本文件格式，UTF-8格式需要注意是否有BOM标志(EF BB BF)
-   * `cat -v` 可以显示不可打印字符
-   * 注意文件的UNIX格式或DOS格式
+   * `file -i _textfilename_` 可以显示文件的编码方式     
+      * 检查文本文件格式，UTF-8格式需要注意是否有BOM标志(EF BB BF)
+      * `cat -v` 可以显示不可打印字符
+      * 注意文件的UNIX格式或DOS格式
+   * 可以使用`enca`检查文件编码。其它的如`universalchardet` `icu`
 
 ## size
 列出目标文件的各section的大小

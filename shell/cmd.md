@@ -1,4 +1,4 @@
-#常用命令
+#常用命令举例
 
 ## tar
    * tar.xz  外面是xz压缩方式，里层是tar打包方式
@@ -156,7 +156,6 @@ pgrep 和 pkill 来找到或是kill 某个名字的进程 (-f 选项很有用).
 `who -u am i 2>/dev/null| awk '{print $NF}'|sed -e 's/[()]//g'`
 
 ## 文本操作命令
-   * cut paste join
    * sort uniq 
       * Stable sort (sort -s) 很有用
          * `sort -k1,1 | sort -s -k2,2` 将两例排序，先是以第二列，然后再以第一列

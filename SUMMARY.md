@@ -25,6 +25,7 @@
 * [系统管理](sysadmin/README.md)
     * [网络](sysadmin/network.md)
     * [磁盘](sysadmin/disk.md)
+    * [性能分析工具](sysadmin/performance.md)
     * [操作系统管理](sysadmin/os.md)
     
 * [Shell](shell/README.md)
@@ -33,6 +34,7 @@
     * [变量](shell/var.md)
     * [bash命令历史](shell/history.md)
     * [常用命令](shell/cmd.md)
+    * [常用命令列表](shell/cmd_list.md)
     * [VIM](shell/vim.md)
     * [Sed和Awk](shell/sed_awk.md)
     * [SSH](shell/ssh.md)

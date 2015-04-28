@@ -144,6 +144,38 @@ format
 __attribute__((format(printf,m,n)))
 ```
 
+## __builtin_expect
+在阅读开源代码时可能会遇到
+```c
+if(likely(condition))
+{
+/*....*/
+}
+```
+或
+```c
+if(unlikely(condition))
+{
+/*....*/
+}
+```
+这样的表达。likely和unlikely这两个宏可使GCC优化编译结果来提升代码的性能。   
+
+**if(likely(value)) 等价于 if(value)**    
+**if(unlikely(value)) 等价于 if(value)**  
+
+宏定义如下
+```c
+#define likely(x) __builtin_expect((x),1)
+#define unlikely(x) __builtin_expect((x),0) 
+```
+   * __builtin_expect() 是 GCC (version >= 2.96）扩展
+      * 目的是将“分支转移”的信息提供给编译器，这样编译器可以对代码进行优化，以减少指令跳转带来的性能下降(程序的局部性原理)
+      * __builtin_expect((x),1) 表示 x 的值为真的可能性更大
+      * __builtin_expect((x),0) 表示 x 的值为假的可能性更大
+      * 使用 likely() 执行 if 后面的语句的机会更大
+      * 使用unlikely()执行else 后面的语句的机会更大
+
 ## 数组初始化
 数组初始化（C99标准）
 ```c
