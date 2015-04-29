@@ -188,3 +188,5 @@ GNU 扩展：在需要将一个范围内的元素初始化为同一值时，可�
 使用gnu的扩展函数`dladdr`（`man dladdr`可以查看使用方式）。    
 另外`dl_iterate_phdr`可以查到当前进程所装在的所有符号，每查到一个就会调用指定的回调函数。
 
+## ld 的 `--wrap`参数
+ld对`--wrap`指定的符号，优先解析__wrap_symbol,　解析不到才去解析symbol；对__read_symbol解析为symbol。

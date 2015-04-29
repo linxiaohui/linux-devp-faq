@@ -21,7 +21,8 @@
     * [操作系统命令](memory/linux.md)
     * [Glibc函数](memory/glibc.md)
     * [内存检查技术与工具](memory/lib.md)
-    
+    * [深入理解malloc](memory/malloc.md)
+
 * [系统管理](sysadmin/README.md)
     * [网络](sysadmin/network.md)
     * [磁盘](sysadmin/disk.md)
@@ -33,7 +34,7 @@
     * [终端相关](shell/terminal.md)
     * [变量](shell/var.md)
     * [bash命令历史](shell/history.md)
-    * [常用命令](shell/cmd.md)
+    * [常见任务](shell/cmd.md)
     * [常用命令列表](shell/cmd_list.md)
     * [VIM](shell/vim.md)
     * [Sed和Awk](shell/sed_awk.md)

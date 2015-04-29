@@ -1,4 +1,4 @@
-#常用命令举例
+#常见任务
 
 ## tar
    * tar.xz  外面是xz压缩方式，里层是tar打包方式
@@ -135,13 +135,14 @@ echo abcdee | grep -q abc && echo "Found" || echo "Not found"
 * `echo -n '+' | od -tx1 -An | tr -d ' '`
 
 
-## tr
-
 ## 显示进程树
 pstree -p
 
 ## 根据进程名查找或kill进程
 pgrep 和 pkill 来找到或是kill 某个名字的进程 (-f 选项很有用).
+
+## 根据进程名找进程id
+pidof _ProcessName_
 
 ## 让某个进程在后台运行
 使用 nohup 或  disown 

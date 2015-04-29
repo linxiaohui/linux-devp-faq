@@ -123,3 +123,26 @@ glibc 自带了一个 libmemusage 的库，用于收集应用程序运行时的�
 使用起来很简单，只要在编译的时候添加 `-lmemusage` 即可。  
 它使用 api hook 技术对 malloc等的调用进行监视，统计相应大小内存块的使用比率，
 并可给出简单的内存申请与释放的统计信息，可以用于简单的判断是否有内存泄漏。
+
+## malloc_info函数
+将malloc的状态信息输出到FILE*流中。
+   * mallinfo将内存信息输出到一个结构中, 不适合64位的情况（输出结构中的字段定义为int）
+   * malloc_info将信息输出为自描述的格式（目前为XML）
+   * malloc_info的输出可能随glibc的变化而变化
+
+## 如何查看glibc的版本
+   * ldd _progname__查看其依赖的libc(如`/lib64/libc.so.6`)；执行`/lib64/libc.so.6`将显示相关信息
+   * SUSE: `getconf -a |grep -i lib`
+   * 程序中使用Glibc提供的函数
+```c
+#include <stdio.h>  
+#include <gnu/libc-version.h>  
+int main () 
+{ 
+    printf("%s\n",gnu_get_libc_version ());
+    return 0;
+}  
+```
+
+## 备注
+   * 关于malloc_info参见[glibc 2.10 news](http://udrepper.livejournal.com/20948.html)
