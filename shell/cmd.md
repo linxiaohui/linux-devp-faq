@@ -186,6 +186,9 @@ cat a b b | sort| uniq -u > c   # c is set difference a - b 差集
 
 `dd if=XXX.xml of=YYY.xml bs=1 skip=3`
 
+## 删除BOM头
+`sed -i 's/\xEF\xBB\xBF//' `
+
 ## 将printf格式化的结果赋值给变量
 例如将数字转换成其十六进制形式
    * 常见的写法
