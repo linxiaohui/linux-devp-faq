@@ -73,3 +73,12 @@ fwrite(ghttp_get_body(request), ghttp_get_body_len(request), 1, stdout);
 ghttp_request_destroy(request);
 
 ```
+
+## OpenCC
+Open Chinese Convert（OpenCC）是一个开源的中文简繁转换项目.  
+它包括一个可执行程序opencc以及一套库. [文档](http://byvoid.github.io/OpenCC/1.0.2/group__opencc__c__api.html).  
+opencc的用法:  
+   * 查看帮助 `opencc --help`   
+   * 简体转繁体 `opencc -i <filename> -c zhs2zht.ini`
+   * 繁体转简体 `opencc -i <filename> -c zht2zhs.ini`
+
