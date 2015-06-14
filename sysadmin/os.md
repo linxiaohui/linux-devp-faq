@@ -15,3 +15,13 @@ mount -no remount,ro /
 reboot
 ```
 
+## grub重装
+   * grub2-install /dev/sda
+   * 修改/etc/grub.d/下的配置文件
+   * grub2-mkconfig > /boot/grub2/grub.cfg
+
+## sparse file not allowed
+   * / 分区为btrfs
+   * 删除/boot/grub2/grubenv
+   * grub2-editenv create
+

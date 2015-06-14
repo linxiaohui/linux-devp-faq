@@ -48,3 +48,4 @@
 * [杂项](misc/README.md)
     * [桌面环境](misc/desktop.md)
     * [配置](misc/config.md)
+    * [常用软件](misc/software.md)
