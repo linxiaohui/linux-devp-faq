@@ -12,6 +12,19 @@ vmtool安装成功，但是hgfs下没有被挂接共享目录
 ```
      ./host:/ASources       /mnt/hgfs    vmhgfs     default    0     0
 ```
+
+## 网络设备的名字
+在VmWare中安装openSUSE, 执行`/sbin/ifconfig`查看网络设备显示: 
+```
+eno167777 Link encap:Ethernet  HWaddr XX:XX:XX:XX:XX:XX  
+          inet addr:192.168.106.128  Bcast:192.168.106.255  Mask:255.255.255.0
+```
+而 `/sbin/ifconfig eno167777` 报错设备不错在.  
+事实上, 设备名是 eno16777736 ,`/sbin/ifconfig eno16777736` 查看设备信息.   
+具体名字可以查看 `/etc/sysconfig/network`文件夹下的ifcfg-XXXX文件   
+
+
+
 ## openSuSE防火墙的关闭
 ```
 sudo /usr/sbin/SuSEfirewall2 stop 
