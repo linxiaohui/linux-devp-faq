@@ -13,7 +13,7 @@
 ### 编译安装步骤
    * 安装依赖软件
       * `sudo zypper install wxWidgets-devel nasm fuse-devel`
-   * 安装[patch](resources/truecrypt-7.1a.patch)
+   * 安装[patch](truecrypt-7.1a.patch)
       * `cd truecrypt-7.1a-source`
       * `patch -p1 < truecrypt-7.1a-source.patch`
    * make
