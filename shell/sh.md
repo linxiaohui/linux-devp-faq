@@ -7,6 +7,12 @@
    * `echo $0`       显示当前shell名称
    * **注**: 若在bash中执行ksh，之后echo $SHELL与echo $0显示不一样
 
+## 查看bash内置命令
+   * `help`
+
+## bash组合键
+   * `man readline` 
+
 ## shell超时
    * A.
 ```python
