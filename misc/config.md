@@ -1,7 +1,8 @@
 #配置
 
 ## vmware相关
-vmtool安装成功，但是hgfs下没有被挂接共享目录
+
+### vmtool安装成功，但是hgfs下没有被挂接共享目录
    1. 使用vmtool 提供的命令`vmware-hgfsclient`查看系统中可以看到的由宿主机共享出的目录
    2. 使用mount命令将宿主机共享出的目录挂接到/mnt/hgfs/下；
 ```
@@ -13,6 +14,37 @@ vmtool安装成功，但是hgfs下没有被挂接共享目录
      ./host:/ASources       /mnt/hgfs    vmhgfs     default    0     0
 ```
 
+### 虚拟机无法获取IP
+宿主vmware-dhcp服务终止导致虚拟机无法获取IP
+
+### 安装vmware-tools 失败
+报错
+```
+A previous installation of VMware software has been detected.
+The previous installation was made by the tar installer (version 3).
+Keeping the tar3 installer database format.
+Error: Unable to find the binary installation directory (answer BINDIR)
+in the installer database file “/etc/vmware-tools/locations”.
+Failure
+Execution aborted.
+```
+
+解决方法：
+      1. 删除etc/vmware-tools目录 `rm -rf /etc/vmware-tools`
+      2. 删除/tmp/vm* `rm -rf /tmp/vm*`
+      3. 重新安装
+     
+
+## HOSTNAME有误
+因`/etc/hosts`有误, 系统hostname不为`/etc/hostname`中配置的名字而是`bogon`.   
+同时导致vim报错, 类似于
+```
+_IceTransSocketUNIXConnect: Cannot connect to non-local host
+Could not open network socket.
+```
+当GTK程序启动很慢而且出现这种类似的提示, 一般来说是因为HOSTNAME有问题
+
+
 ## 网络设备的名字
 在VmWare中安装openSUSE, 执行`/sbin/ifconfig`查看网络设备显示: 
 ```
@@ -22,7 +54,6 @@ eno167777 Link encap:Ethernet  HWaddr XX:XX:XX:XX:XX:XX
 而 `/sbin/ifconfig eno167777` 报错设备不错在.  
 事实上, 设备名是 eno16777736 ,`/sbin/ifconfig eno16777736` 查看设备信息.   
 具体名字可以查看 `/etc/sysconfig/network`文件夹下的ifcfg-XXXX文件   
-
 
 
 ## openSuSE防火墙的关闭
