@@ -97,7 +97,7 @@ Gprof 的具体参数 `man gprof`
         * 不能捕获、忽略SIGPROF信号。man手册对SIGPROF的解释是：profiling timer expired. 如果忽略这个信号，gprof的输出则是：Each sample counts as 0.01 seconds. no time accumulated.
 
 ## Coan
-coan可以用来净化C语言中的预编译指令；可以用于阅读源代码时简化误用的代码。    
+coan可以用来净化C语言中的预编译指令；可以用于阅读源代码时简化无用的代码。    
 例如学习libevent在Linux下实现时可以使用如下命令
 ```bash
 coan source -D_EVENT_HAVE_SYS_IOCTL_H -D_EVENT_HAVE_NETDB_H -D_EVENT_HAVE_STDDEF_H \ 

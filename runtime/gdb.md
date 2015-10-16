@@ -3,6 +3,9 @@
 ## watch变量
 watch _varname_ 可以在变量值发生变化的时候中断执行。这对检查内存越界覆盖"无辜"变量很有用。缺点是执行会比较慢。
 
+## select-frame
+
+
 
 ## gdb时打印完整的字符串
 可以通过`set print element 0`命令,之后print命令显示完整的字符串   

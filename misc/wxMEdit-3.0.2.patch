@@ -1,0 +1,62 @@
+diff -r -N -u wxMEdit-3.0.2-o/src/dialog/wxm_find_in_files_dialog.cpp wxMEdit-3.0.2/src/dialog/wxm_find_in_files_dialog.cpp
+--- wxMEdit-3.0.2-o/src/dialog/wxm_find_in_files_dialog.cpp	2015-08-30 18:14:19.000000000 +0800
++++ wxMEdit-3.0.2/src/dialog/wxm_find_in_files_dialog.cpp	2015-10-16 14:40:25.726696168 +0800
+@@ -35,7 +35,7 @@
+ #endif
+ 
+ #include <boost/scoped_ptr.hpp>
+-#include <boost/tr1/unordered_set.hpp>
++#include <tr1/unordered_set>
+ 
+ #ifdef _DEBUG
+ #include <crtdbg.h>
+diff -r -N -u wxMEdit-3.0.2-o/src/wxm/searcher.cpp wxMEdit-3.0.2/src/wxm/searcher.cpp
+--- wxMEdit-3.0.2-o/src/wxm/searcher.cpp	2015-08-30 18:14:19.000000000 +0800
++++ wxMEdit-3.0.2/src/wxm/searcher.cpp	2015-10-16 14:40:10.242695418 +0800
+@@ -22,7 +22,7 @@
+ #include <boost/xpressive/xpressive_dynamic.hpp>
+ #include <boost/xpressive/traits/null_regex_traits.hpp>
+ #include <boost/xpressive/traits/cpp_regex_traits.hpp>
+-#include <boost/tr1/unordered_map.hpp>
++#include <tr1/unordered_map>
+ 
+ using namespace std;
+ using namespace boost::xpressive;
+diff -r -N -u wxMEdit-3.0.2-o/src/wxmedit/wxmedit_command.h wxMEdit-3.0.2/src/wxmedit/wxmedit_command.h
+--- wxMEdit-3.0.2-o/src/wxmedit/wxmedit_command.h	2015-08-30 18:14:19.000000000 +0800
++++ wxMEdit-3.0.2/src/wxmedit/wxmedit_command.h	2015-10-16 14:40:57.663697713 +0800
+@@ -32,8 +32,8 @@
+ # pragma warning( pop )
+ #endif
+ 
+-#include <boost/tr1/unordered_map.hpp>
+-#include <boost/tr1/unordered_set.hpp>
++#include <tr1/unordered_map>
++#include <tr1/unordered_set>
+ 
+ #include <vector>
+ #include <list>
+diff -r -N -u wxMEdit-3.0.2-o/src/wxmedit/wxm_syntax.cpp wxMEdit-3.0.2/src/wxmedit/wxm_syntax.cpp
+--- wxMEdit-3.0.2-o/src/wxmedit/wxm_syntax.cpp	2015-08-30 18:14:19.000000000 +0800
++++ wxMEdit-3.0.2/src/wxmedit/wxm_syntax.cpp	2015-10-16 14:41:09.582698290 +0800
+@@ -26,7 +26,7 @@
+ # pragma warning( pop )
+ #endif
+ 
+-#include <boost/tr1/unordered_map.hpp>
++#include <tr1/unordered_map>
+ 
+ #ifdef _DEBUG
+ #include <crtdbg.h>
+diff -r -N -u wxMEdit-3.0.2-o/src/wxmedit/wxm_syntax.h wxMEdit-3.0.2/src/wxmedit/wxm_syntax.h
+--- wxMEdit-3.0.2-o/src/wxmedit/wxm_syntax.h	2015-08-30 18:14:19.000000000 +0800
++++ wxMEdit-3.0.2/src/wxmedit/wxm_syntax.h	2015-10-16 14:40:41.464696929 +0800
+@@ -34,7 +34,7 @@
+ # pragma warning( pop )
+ #endif
+ 
+-#include <boost/tr1/unordered_set.hpp>
++#include <tr1/unordered_set>
+ 
+ #include <map>
+ #include <vector>
