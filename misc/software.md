@@ -91,6 +91,7 @@ freeSpaceText = tfreeSpaceText;
       * cp wxmedit /usr/bin
       * cp wxmedit.png /usr/share/pixmaps/
       * cp wxmedit.desktop /usr/share/applications/
+
 ## 备注
 编译`wxMEdit-3.0.2.tar.gz`时报错, 经分析是因为 wxMEdit中使用boost/tr1/unorderd_map等于c++4.8标准库tr1冲突,  
 从而导致重复定义。 [patch](wxMEdit-3.0.2.patch)后`./configure && make && make install`
