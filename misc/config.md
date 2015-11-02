@@ -2,6 +2,13 @@
 
 ## vmware相关
 
+
+### 安装vmtools时报错
+   * 报错`implicit declaration of vfs_readlink`
+   * 报错`implicit declaration of generic_file_aio_write`
+   * VMWare Workstation 10.0.0 build-1295980 && VMwareTools-9.6.0-1294478.tar.gz 
+根据[vmware-tools-patches](https://github.com/rasa/vmware-tools-patches), 下载最新版本的VMWare Tools安装.
+
 ### vmtool安装成功，但是hgfs下没有被挂接共享目录
    1. 使用vmtool 提供的命令`vmware-hgfsclient`查看系统中可以看到的由宿主机共享出的目录
    2. 使用mount命令将宿主机共享出的目录挂接到/mnt/hgfs/下；
@@ -56,11 +63,35 @@ eno167777 Link encap:Ethernet  HWaddr XX:XX:XX:XX:XX:XX
 具体名字可以查看 `/etc/sysconfig/network`文件夹下的ifcfg-XXXX文件   
 
 
-## openSuSE防火墙的关闭
+## OpenSuSE防火墙的关闭
 ```
 sudo /usr/sbin/SuSEfirewall2 stop 
 ```
 永远关闭则
 ```
 chkconfig SuSEfirewall2 off
+```
+
+## 配置防火墙
+   * 配置文件
+```
+/etc/sysconfig/SuSEfirewall2
+```
+   * 允许访问特定端口
+      * TCP端口
+         `FW_SERVICES_EXT_TCP = "6000"`
+      * UDP端口
+         `FW_SERVICES_EXT_UDP = "177"`
+   * 只允许特定IP访问指定端口
+      * `FW_SERVICES_ACCEPT_EXT`参数
+      * 允许单个地址
+         `FW_SERVICES_ACCEPT_EXT="192.168.1.103,tcp,80"`
+      * 允许多个地址
+         `FW_SERVICES_ACCEPT_EXT="192.168.2.103 192.168.1.103,tcp,80"`
+      * 允许一个网段
+         `FW_SERVICES_ACCEPT_EXT="192.168.2.0/24,tcp,80"`
+      * 注意相应的端口不应该在`FW_SERVICES_EXT_TCP`或`FW_SERVICES_EXT_UDP`中
+   * 修改后重启防火墙
+```
+sudo /usr/sbin/SuSEfirewall2 restart
 ```

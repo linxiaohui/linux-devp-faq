@@ -33,3 +33,29 @@ auto-detected "['GB18030', 'UTF-8', 'CURRENT', 'ISO-8859-15', 'UTF-16']"
    * 图形化方式
 运行`dconf-editor`
 展开/org/gnome/gedit/preferences/encodings auto-detected的Value中加入 'GB18030' ，加在UTF-8前面；
+
+
+## Xfce中关闭警报音
+安装Xfce后, 在应用程序(如系统设置,vi等)按某方向键,如果到了该方向的末端还继续按该方向键, 
+或者在系统注销时会发出"嘟"的一声报警音。
+   * 关闭
+```bash
+rmmod pcspkr
+```
+   * 打开
+```bash
+modprobe pcspk
+```
+
+
+上面的方法重新启动后beep依旧, 彻底关掉beep
+   * bash
+   在~/.bashrc的最后添加
+```bash
+setterm --blength 0
+xset -b
+```
+   * 或者
+```bash
+sudo echo "blacklist pcspkr" >> /etc/modprobe.d/50-blacklist.conf
+```
