@@ -93,5 +93,6 @@ chkconfig SuSEfirewall2 off
       * 注意相应的端口不应该在`FW_SERVICES_EXT_TCP`或`FW_SERVICES_EXT_UDP`中
    * 修改后重启防火墙
 ```
-sudo /usr/sbin/SuSEfirewall2 restart
+sudo /usr/sbin/SuSEfirewall2 stop
+sudo /usr/sbin/SuSEfirewall2 start
 ```
