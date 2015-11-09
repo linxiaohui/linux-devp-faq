@@ -41,6 +41,18 @@ Execution aborted.
       2. 删除/tmp/vm* `rm -rf /tmp/vm*`
       3. 重新安装
      
+## Virtual Box
+
+### 共享
+在设置的"共享文件夹中"设置宿主目录和共享名字(如C_DRIVE),   
+使用命令 `mount -t vboxsf C_DRIVE /mnt/c/` 挂载,  
+卸载使用命令 `umount -f /mnt/c`
+
+### 网络
+虚拟机里需要配置两块网卡:
+   * NAT
+   * Host-Only
+
 
 ## HOSTNAME有误
 因`/etc/hosts`有误, 系统hostname不为`/etc/hostname`中配置的名字而是`bogon`.   
