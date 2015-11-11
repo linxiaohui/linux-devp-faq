@@ -108,3 +108,7 @@ chkconfig SuSEfirewall2 off
 sudo /usr/sbin/SuSEfirewall2 stop
 sudo /usr/sbin/SuSEfirewall2 start
 ```
+
+## OpenSuSE中服务的启停
+   * `service sshd stop`
+   * `service sshd start`
