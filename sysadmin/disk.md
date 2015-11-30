@@ -12,6 +12,8 @@
    2. 恢复文件
    `cat /proc/_pid_/fd/_fd_ > _filename_ `
 
+## 查看引起`device busy`的进程
+   `fuser /path_to_dir`
 
 ## 集群监控工具
 http://ganglia.info/

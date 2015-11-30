@@ -53,6 +53,11 @@ from [Linux Performance Observability Tools by Brendan Gregg](http://www.brendan
    * cpu、 mem、 disk、 net等基本都可以覆盖
    * 可以周期性的执行统计
    * 示例 `sar -A 1 1`
+   * 执行`sar`时报错`please check if data collecting is enabled`, 执行
+```
+systemctl enable sysstat
+systemctl start sysstat
+```
 
 ## netstat
    * 查看 socket 的连接信息，状态等
