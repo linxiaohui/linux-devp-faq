@@ -25,6 +25,18 @@ echo ${var%.pdf}.txt # 输出 foo.txt
 fi
 ```
 
+## 变量 vs 路径
+
+| 变量        | 结果           | 说明  |
+| ------------- |:-------------:| -----:|
+| ${path}      | /usr/local/bin/emacs | 原值 |
+| ${path#/*/}      | local/bin/emacs      |   去除第一个文件夹 |
+| ${path##/*/} | emacs      |    只取文件名 basename |
+| ${path%/*}      | /usr/local/bin | 只取路径 dirname |
+| ${path:15}}      | emacs      |   第15个字母后的所有字母 |
+| ${path:10:4} | /bin      |   第10个字母后4个字母 |
+
+
 ## 删除字符串中的第一个或者最后一个字符
 ```bash
 $ str="aremoveb"
