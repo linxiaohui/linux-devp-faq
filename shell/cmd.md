@@ -171,6 +171,7 @@ cat a b | sort| uniq > c   # c is a union b 并集
 cat a b | sort| uniq -d > c   # c is a intersect b 交集
 cat a b b | sort| uniq -u > c   # c is set difference a - b 差集
 ```
+   * 备注: `comm`命令
    * shuf    来打乱一个文件中的行或是选择文件中一个随机的行
    * shred
 
