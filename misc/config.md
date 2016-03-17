@@ -112,3 +112,7 @@ sudo /usr/sbin/SuSEfirewall2 start
 ## OpenSuSE中服务的启停
    * `service sshd stop`
    * `service sshd start`
+   
+## 启动时报错piix4_smbus: Host SMBus controller not enabled的解决方法 
+` lsmod | grep piix4 `   
+`echo "blacklist i2c_piix4 " | sudo tee -a /etc/modprobe.d/50-blacklist.conf `
