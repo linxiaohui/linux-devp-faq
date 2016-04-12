@@ -1,5 +1,9 @@
 #变量与运算
 
+## 获得脚本名称
+   * 使用`sh test.sh` 或 `./test.sh`的方式运行脚本, $0即为脚本的名字
+   * 使用`source test.sh` 或`. ./test.sh`的方式运行脚本，$0为bash或上层脚本(执行source的脚本)的名字, 此时需要使用${BASH_SOURCE-$0}获取脚本名字. 
+
 ## 获取变量VAR的长度
 ${#VAR} 
 
