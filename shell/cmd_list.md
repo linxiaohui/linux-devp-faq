@@ -169,8 +169,13 @@
    * 重复执行命令，并输出到屏幕
 
 ## dmidecode
-   * 以一种可读的方式dump出机器的DMI(Desktop Management Interface)信息
-   * 包括了硬件以及BIOS，既可以得到当前的配置，也可以得到系统支持的最大配置；
+   * 以一种可读的方式dump出机器的DMI(Desktop Management Interface)信息,包括了硬件以及BIOS，既可以得到当前的配置，也可以得到系统支持的最大配置；
+   * 查看内存的插槽数,已经使用多少插槽.每条内存多大，已使用内存多大
+      `sudo dmidecode|grep -P -A5 "Memory\s+Device"|grep Size|grep -v Range`
+   * 查看内存支持的最大内存容量
+      `sudo dmidecode|grep -P 'Maximum\s+Capacity'`
+   * 查看内存的频率
+      `sudo dmidecode|grep -A 16 "Memory Device"|grep 'Speed'`
    
 #其它工具
 

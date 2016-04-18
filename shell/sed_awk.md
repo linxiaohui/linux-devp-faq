@@ -46,3 +46,5 @@
    `tail -2 test.txt | head -1`  
    `tac test.txt | sed -n '2p'`  
 
+## 整词匹配
+   * `sed 's/\<old\>/new/g' file` 

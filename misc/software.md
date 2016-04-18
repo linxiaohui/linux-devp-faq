@@ -95,3 +95,10 @@ freeSpaceText = tfreeSpaceText;
 ## 备注
 编译`wxMEdit-3.0.2.tar.gz`时报错, 经分析是因为 wxMEdit中使用boost/tr1/unorderd_map等与c++4.8标准库tr1冲突,
 从而导致重复定义。 [patch](wxMEdit-3.0.2.patch)后`./configure && make && make install`
+
+
+## 数值计算和符号计算
+   * Octave
+   * Maxima
+   * Python-sympy
+   

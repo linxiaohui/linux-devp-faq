@@ -29,8 +29,12 @@ dd if=stuff.des3 |openssl des3 -d -k secretpassword|tar zxf -
    * man date
 
 ## awk
-指定多个分割符
-命令行选项 -F"[:/]"  告诉awk  / 和 : 都是字段分隔符，即-F选项支持正则表达式
+   * 指定多个分割符  
+      命令行选项 -F"[:/]"  告诉awk  / 和 : 都是字段分隔符，即-F选项支持正则表达式
+   * 输出单引号(')
+      * ` '\'' `
+      * printf("%c",39)
+      * printf("%s","\047")
 
 
 ## rpm
@@ -126,6 +130,7 @@ echo abcdee | grep -q abc && echo "Found" || echo "Not found"
 
 ## 获取一个字符的ASCII码
 * `man ascii`
+* `showkey -a`
 附：man 报错的可能的原因
     * locale问题
     * 报错`conversion from utf8 unsupported`, 修改 /usr/bin/nroff脚本，把utf8 写成 utf-8（使用iconv -l检查支持的编码列表）
