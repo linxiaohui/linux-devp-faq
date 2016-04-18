@@ -217,6 +217,7 @@
    * 在一定程度上它与 top 针对进程所做的工作类似
    * 基于libpcap
 
-
-
+## nmap
+   * 获取指定IP的操作系统信息
+   * `nmap -sS -O _ip_address_`
 
