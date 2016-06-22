@@ -31,3 +31,6 @@ daemon 方式运行的程序，其与 CLI 启动的程序的主要区别是进�
 /proc/sys/kernel/core_pattern中未定义%p时，/proc/sys/kernel/core_uses_pid文件中定义是否在core文件名后追加进程PID。
   * `echo 1> /proc/sys/kernel/core_uses_pid` 使得core文件名后包含 .PID
   * `echo 0> /proc/sys/kernel/core_uses_pid` 使得core文件名后不包含 .PID
+
+## suid_dumpable
+若程序调用了`seteuid()`/`setegid()`改变了进程的有效用户或组，则在默认情况下系统不会为这些进程生成Coredump。为了能够让这些进程生成core dump，需要将`/proc/sys/fs/suid_dumpable`文件的内容改为1。

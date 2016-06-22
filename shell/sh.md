@@ -11,7 +11,7 @@
    * `help`
 
 ## bash组合键
-   * `man readline` 
+   * `man readline`
 
 ## shell超时
    * A.
@@ -67,7 +67,7 @@ while read line; do
     let a++
     echo --$line--
 done < /tmp/test.tmp
- 
+
 echo a:$a
 rm -f /tmp/test.tmp
 ```
@@ -83,6 +83,12 @@ done << EOF
 EOF
 echo b: $b
 ```
+上面的`EOF`被称为limit string
+   * limit string前加`-`号表示suppress tab(不会suppress space)
+   * limit string用`'`,`"`或"\\"转义可以禁用here document中变量替换
+
+## Here String
+`cmd <<<$var`,$var将被展开并作为cmd的标准输入.
 
 ## 如何调试
 在bash的脚本中
@@ -131,7 +137,7 @@ echo "All job have been done!"
 
 ## bash参数
 bash中--后面的参数不会被当作选项解析.
-   
+
 # 重定向
 ## `1> /dev/null 2>&1`解释
    * 1代表标准输出，2代表错误信息输出.
@@ -156,4 +162,3 @@ bash中--后面的参数不会被当作选项解析.
 使用  
    * `CMD 2>&1 1>/dev/null | grep XXX` 这样只grep stderr （注意顺序）
    * `CMD 2>&1 | grep XXX ` 同时grep stdout和stderr
-

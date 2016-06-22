@@ -23,10 +23,10 @@
 setjmp 和 sigsetjmp 的区别是: setjmp 不一定会恢复信号集合,而sigsetjmp可以保证恢复信号集合
 
 ## RST与SIGPIPE
-   1. socket通讯中，若对方close了socket，继续向其中写数据，第一次会收到RST包
+   1. socket通讯中，若对方close了socket，继续向其中写数据，第一次发送如果发送缓冲没问题, 会返回正确发送，但会收到RST包;
    2. 向一个收到了RST包的socket继续写入数据会收到SIGPIPE信号
    3. socket选项SO_LINGER决定了close socket后是否立即向对方发送RST包
-   
+
 ## SIGBUS
   * 根据man mmap：若mmap后访问的内存没有文件对应（例如被另外的进程truncate）会产生SIGBUS信号
   * 据说一些平台下访问未对其的内存会发生SIGBUS； x86平台不会
@@ -65,4 +65,3 @@ dup2(stdfd, STDERR_FILENO);
 还有一个作用是为确保调用setsid时进程不是进程组组长。
 setsid()使进程没有控制终端
 * 第二次fork主要是为了防止进程再次打开一个控制终端。（因为只有会话组长才能打开控制终端）。
-

@@ -22,6 +22,22 @@ tar -zcvf - stuff|openssl des3 -salt -k secretpassword | dd of=stuff.des3
 dd if=stuff.des3 |openssl des3 -d -k secretpassword|tar zxf -
 ```
 
+## find
+   * 一次查找多个指定文件
+```bash
+find . -name "a.html" -o -name "b.html"  
+find . -iregex '.*\.txt\|.*\.doc\|.*\.mp3'
+```
+   * 排除某些文件类型
+```bash
+find . -type f ! -name "*.html"    
+```
+   * 排除多种文件类型的示例
+```bash
+find . -type f ! -name "*.html" ! -name "*.php" -name "*.svn-base"
+```
+
+
 ## date
    * date -d next-day +%Y%m%d #明天日期
    * date -d last-day +%Y%m%d #昨天日期
@@ -38,19 +54,19 @@ dd if=stuff.des3 |openssl des3 -d -k secretpassword|tar zxf -
 
 
 ## rpm
-   * rpm -q 
+   * rpm -q
    查询系统已安装的软件(查看系统中所有已经安装的包，要加 -a 参数)
-   * rpm -qf 
+   * rpm -qf
    查询一个文件属于哪个软件包
-   * rpm -ql 
+   * rpm -ql
    查询已安装软件包都安装到何处
-   * rpm -i 
+   * rpm -i
    安装rpm包
-   * rpm -qpl 
+   * rpm -qpl
    列出RPM软件包内的文件信息[Query Package list]
-   * rpm -qpi 
+   * rpm -qpi
    查看一个软件包的用途、版本等信息
-   * rpm -e 
+   * rpm -e
    删除一个rpm包[erase]
 
 
@@ -150,7 +166,7 @@ pgrep 和 pkill 来找到或是kill 某个名字的进程 (-f 选项很有用).
 pidof _ProcessName_
 
 ## 让某个进程在后台运行
-使用 nohup 或  disown 
+使用 nohup 或  disown
 
 ## 日志监控
 `tail -f /path/to/file.log | sed '/^Finished: SUCCESS$/ q'`
@@ -162,7 +178,7 @@ pidof _ProcessName_
 `who -u am i 2>/dev/null| awk '{print $NF}'|sed -e 's/[()]//g'`
 
 ## 文本操作命令
-   * sort uniq 
+   * sort uniq
       * Stable sort (sort -s) 很有用
          * `sort -k1,1 | sort -s -k2,2` 将两例排序，先是以第二列，然后再以第一列
       * 按照tab分隔符进行字段排序
@@ -182,7 +198,7 @@ cat a b b | sort| uniq -u > c   # c is set difference a - b 差集
 
 ## AIX如何查询CPU个数
    * vmstat可以查看逻辑CPU个数
-   * bindprocessor -q 
+   * bindprocessor -q
    * lsdev -Cc processor  可以查看物理CPU个数
    * prtconf或lsconf脚本可以查看物理CPU个数（查看脚本可以看到使用的方式
    * smtctl
