@@ -12,18 +12,18 @@
 
 注意脚本要保存为UNIX格式，实践中发现DOS格式在一些情况下有问题
    * dos2unix
-   * vim 
+   * vim
       * DOS转UNIX `:set fileformat=unix`
       * UNIX转DOS `:set fileformat=dos`
       * 简写 `:set ff=`
-   * dos2unix: 
-      * `sed -i'' "s/\r//" file` 
+   * dos2unix:
+      * `sed -i'' "s/\r//" file`
       * sed 's/\x0D$//'
-      * `cat file | col -b > newfile` 
-      * `cat file | tr -d "\r" > newfile` 
-      * `cat file | tr -d "\015" > newfile` 
-   * unix2dos: 
-     * `sed -i'' "s/$/\r/" file` 
+      * `cat file | col -b > newfile`
+      * `cat file | tr -d "\r" > newfile`
+      * `cat file | tr -d "\015" > newfile`
+   * unix2dos:
+     * `sed -i'' "s/$/\r/" file`
      * `sed -i'' "s/$/\x0d/" file`
 备注：
    * UTF-8格式的文本需要注意是否有BOM标志(EF BB BF)
@@ -41,14 +41,15 @@
    `sed -n '2p' test.txt`
    * 打印文件的第2到5行  
    `sed -n '2,5p' test.txt`
+   `awk 'NR==2,NR==5' test.txt`
    * 打印文件的第2行始(包括第2行在内) 5行的内容  
    `sed -n '2,+4p' test.txt`
    * 打印倒数第二行  
    `tail -2 test.txt | head -1`  
-   `tac test.txt | sed -n '2p'`  
+   `tac test.txt | sed -n '2p'`
 
 ## 整词匹配
-   * `sed 's/\<old\>/new/g' file` 
+   * `sed 's/\<old\>/new/g' file`
 
 
 ## 文本间隔
@@ -93,7 +94,7 @@
 ## 文本转换和替代
 
 ### 将每一行前导的“空白字符”（空格，制表符）删除使之左对齐
-    sed 's/^[ \t]*//'     
+    `sed 's/^[ \t]*//'`    
 
 ### 将每一行拖尾的“空白字符”（空格，制表符）删除
     `sed 's/[ \t]*$//'`
@@ -108,10 +109,10 @@
     `sed -e :a -e 's/^.\{1,78\}$/ &/;ta'`  # 78个字符外加最后的一个空格
 
 ### 以79个字符为宽度，使所有文本居中。在方法1中，为了让文本居中每一行的前头和后头都填充了空格。 在方法2中，在居中文本的过程中只在文本的前面填充空格，并且最终这些空格将有一半会被删除。此外每一行的后头并未填充空格:
-
+```bash
 sed  -e :a -e 's/^.\{1,77\}$/ & /;ta'                     # 方法1
 sed  -e :a -e 's/^.\{1,77\}$/ &/;ta' -e 's/\( *\)\1/\1/'  # 方法2
-
+```
 ### 在每一行中查找字串“foo”，并将找到的“foo”替换为“bar”:
 sed 's/foo/bar/'                 # 只替换每一行中的第一个“foo”字串
 sed 's/foo/bar/4'                # 只替换每一行中的第四个“foo”字串
@@ -349,6 +350,9 @@ awk '/pattern/ {print "$1"}'    # 标准 Unix shell环境
 ### 计算所有行所有区域（词）的个数
     `awk '{ total = total + NF }; END {print total}' file`
 
+### 打印两个模式之间的行
+    `awk '/START_PATTERN/,/END_PATTERN/' file`
+    
 ### 打印包含`Beth`的行数
     `awk '/Beth/{n++}; END {print n+0}' file`
 

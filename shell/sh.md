@@ -7,6 +7,13 @@
    * `echo $0`       显示当前shell名称
    * **注**: 若在bash中执行ksh，之后echo $SHELL与echo $0显示不一样
 
+## bash执行顺序
+   1. 别名：alias
+   2. 函数：function
+   3. 内建命令：built in
+   4. 外部命令：command
+`\COMMAND` 不把COMMAND作为alias。 `type COMMAND`可以检查COMMAND的类型。
+
 ## 查看bash内置命令
    * `help`
 
@@ -162,3 +169,16 @@ bash中--后面的参数不会被当作选项解析.
 使用  
    * `CMD 2>&1 1>/dev/null | grep XXX` 这样只grep stderr （注意顺序）
    * `CMD 2>&1 | grep XXX ` 同时grep stdout和stderr
+
+## Shell 文件读写
+```bash
+echo 1234567890 > tmp
+exec 3<> tmp
+read -n 4 <&3
+echo -n . >&3
+exec 3>&-
+cat tmp
+```
+输出为 1234.67890
+
+**注意**: `3<>`, `<&3`, `&>3`,`3>&` 均不能有空格

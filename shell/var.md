@@ -4,6 +4,7 @@
    * shell先作变量替换，然后作文件名替换
    * 双引号中不做文件名替换
 ```
+linxh@Master:~/Git/linux-devp-faq> x=*
 linxh@Master:~/Git/linux-devp-faq> echo $x
 database memory misc programming README.md runtime shell SUMMARY.md sysadmin
 linxh@Master:~/Git/linux-devp-faq> echo '$x'
@@ -12,15 +13,19 @@ linxh@Master:~/Git/linux-devp-faq> echo "$x"
 *
 ```
 
+## 子字符串
+   * `${var:start_pos:end_pos}`, -1 代表最后一个字符
+   * `${var/src/replace}`, 将src替换
+
 ## 获得脚本名称
    * 使用`sh test.sh` 或 `./test.sh`的方式运行脚本, $0即为脚本的名字
-   * 使用`source test.sh` 或`. ./test.sh`的方式运行脚本，$0为bash或上层脚本(执行source的脚本)的名字, 此时需要使用${BASH_SOURCE-$0}获取脚本名字. 
+   * 使用`source test.sh` 或`. ./test.sh`的方式运行脚本，$0为bash或上层脚本(执行source的脚本)的名字, 此时需要使用${BASH_SOURCE-$0}获取脚本名字.
 
 ## 获取变量VAR的长度
-${#VAR} 
+${#VAR}
 
 ## echo $line| awk –F’\t’ 达不到预期效果
-需使用echo "$line” | awk –F’\t’ 
+需使用echo "$line” | awk –F’\t’
 
 ## 变量展开
    * ${param:+expr} 如果param设置并且不为空，展开expr
@@ -36,7 +41,7 @@ ${#VAR}
    示例：
 ```bash
 if var=foo.pdf
-then 
+then
 echo ${var%.pdf}.txt # 输出 foo.txt
 fi
 ```
@@ -65,7 +70,15 @@ aremov
 $ echo "${str:1:-1}"
 remove
 ```
-关于变量替换的内容参见 man bash
+
+## 变量匹配
+上面的关于变量中`#`,`%`的总结:
+   * ${var#PATTERN}, ${var##PATTERN} 从var的开头删除最短/最长匹配PATTERN的字串
+   * ${var%PATTERN}, ${var%%PATTERN} 从var的后面删除最短/最长匹配PATTERN的字串
+
+
+关于变量替换的内容参见 `man bash`
+
 
 ## 删除环境变量
 `unset LD_TRACE_LOADED_OBJECTS`
@@ -82,7 +95,7 @@ n2=2
 let n3=n1+n2
 let n1++
 ```
-       **备注** 
+       **备注**
       * 变量前无 $
       * \+ += ++等前后不能有空格
 
@@ -91,7 +104,7 @@ let n1++
 n3=$[ n1+n2]
 n3=$[$n1+n2]
 ```
-   * (( )) 
+   * (( ))
       * 与[ ]类似
    * expr
 ```bash

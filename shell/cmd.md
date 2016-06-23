@@ -36,7 +36,11 @@ find . -type f ! -name "*.html"
 ```bash
 find . -type f ! -name "*.html" ! -name "*.php" -name "*.svn-base"
 ```
-
+   * 查找时排除某目录
+```bash
+find . -path ./xxx -prune -o -print
+find . \( -path ./xxx -o -path ./yyy \) -prune -o -print
+```
 
 ## date
    * date -d next-day +%Y%m%d #明天日期
@@ -140,7 +144,6 @@ fi
 echo abcdee | grep -q abc && echo "Found" || echo "Not found"
 ```
 
-
 ## 将man的内容干净的输出到一个文件里
 `man tar | col -b > /tmp/tar.txt`
 
@@ -228,3 +231,7 @@ printf: printf [-v var] format [arguments]
       -v var    assign the output to shell variable VAR rather than
             display it on the standard output
 ```
+
+## 进制转化
+   * N进制转化为10进制: `echo $((2#111000))`
+   * 进制转换:          `echo "obase=10;ibase=2;111000" | bc`
