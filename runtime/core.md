@@ -16,6 +16,19 @@ daemon 方式运行的程序，其与 CLI 启动的程序的主要区别是进�
       * 永久修改：使用sysctl -w name=value命令。  
 `/sbin/sysctl -w kernel.core_pattern=/var/log/%e.core.%p`
 
+## systemd与coredump
+ [/usr/src/linux/Documentation/sysctl/kernel.txt](https://www.kernel.org/doc/Documentation/sysctl/kernel.txt)中关于 core_pattern的描述
+```
+If the first character of the pattern is a '|', the kernel will treat
+  the rest of the pattern as a command to run.  The core dump will be
+  written to the standard input of that program instead of to a file.
+```
+在systemd 下，是一个以'|'开头的字符串，如：| /usr/lib/systemd/systemd-coredump ...
+Coredumps are stored in the systemd journal，需要使用 `systemd-coredumpctl` 来查看
+
+## coredump_filter
+[/usr/src/linux/Documentation/filesystems/proc.txt](https://www.kernel.org/doc/Documentation/filesystems/proc.txt)中关于通过coredump_filter指定要转储的内存段。
+
 ## coredum文件模式
 为了更详尽的记录core dump当时的系统状态，可通过以下参数来丰富core文件的命名：
    * %% 单个%字符

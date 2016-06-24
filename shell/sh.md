@@ -14,11 +14,66 @@
    4. 外部命令：command
 `\COMMAND` 不把COMMAND作为alias。 `type COMMAND`可以检查COMMAND的类型。
 
+```
+COMMAND EXECUTION
+       After a command has been split into words, if it results in a simple command and an optional list of arguments, the following actions are taken.
+
+       If the command name contains no slashes, the shell attempts to locate it.  If there exists a shell function by  that  name,  that  function  is  invoked  as
+       described  above  in  FUNCTIONS.  If the name does not match a function, the shell searches for it in the list of shell builtins.  If a match is found, that
+       builtin is invoked.
+
+       If the name is neither a shell function nor a builtin, and contains no slashes, bash searches each element of the PATH for a directory  containing  an  exe‐
+       cutable file by that name.  Bash uses a hash table to remember the full pathnames of executable files (see hash under SHELL BUILTIN COMMANDS below).  A full
+       search of the directories in PATH is performed only if the command is not found in the hash table.  If the search is unsuccessful, the shell searches for  a
+       defined  shell  function  named command_not_found_handle.  If that function exists, it is invoked with the original command and the original command's argu‐
+       ments as its arguments, and the function's exit status becomes the exit status of the shell.  If that function is not defined, the  shell  prints  an  error
+       message and returns an exit status of 127.
+
+       If  the search is successful, or if the command name contains one or more slashes, the shell executes the named program in a separate execution environment.
+       Argument 0 is set to the name given, and the remaining arguments to the command are set to the arguments given, if any.
+
+       If this execution fails because the file is not in executable format, and the file is not a directory, it is assumed to be a shell script, a file containing
+       shell  commands.  A subshell is spawned to execute it.  This subshell reinitializes itself, so that the effect is as if a new shell had been invoked to han‐
+       dle the script, with the exception that the locations of commands remembered by the parent (see hash below under SHELL BUILTIN COMMANDS) are retained by the
+       child.
+
+       If  the  program  is  a  file beginning with #!, the remainder of the first line specifies an interpreter for the program.  The shell executes the specified
+       interpreter on operating systems that do not handle this executable format themselves.  The arguments to the interpreter consist of a single optional  argu‐
+       ment following the interpreter name on the first line of the program, followed by the name of the program, followed by the command arguments, if any.
+```
+
+**备注**: 实际上bash遇到名字解析的顺序是: 别名-关键字-函数-內建命令-hash-外部命令
+关于hash `man bash`搜索hash
+
+
+## 各种方式执行shell脚本的区别
+   1. .  _script_ / source _script_
+   Shell內建命令，将_script_在当前Shell进程中执行
+   2. bash  _script_
+   将_script_传给bash执行，其中bash是当前shell的子进程
+   3. ./_script_
+   调用exec执行 _script_，内核在检查文件以`#!`开始后将启动其定义的interpreter, 参数为 _script_。
+   对interpreter的要求
+   ```
+   The interpreter must be a valid pathname for an executable which is not itself a script.
+   ```
+   即任一可执行的二进制程序都可以作为 interpreter, 不限于bash, python等。
+
+   `man execve`
+
 ## 查看bash内置命令
    * `help`
 
 ## bash组合键
    * `man readline`
+
+## shopt
+在bash4.0以上版本中，如果bash环境开启了globstar设置，那么两个连续的**可以用来递归匹配某目录下所有的文件名。
+shopt -s expand_aliases
+
+## 返回值
+如果bash脚本没有调用`exit 返回值`的话，其最后执行命令的返回值将成为bash脚本的返回值。
+   * 0 正确
 
 ## shell超时
    * A.
@@ -103,8 +158,37 @@ echo b: $b
    * 使用 set -e 来当有错误发生的时候abort执行
    * 使用 set -o pipefail 来限制错误
    * 可以使用trap来截获信号（如截获ctrl+c）
-
 可以直接bash -x _script_ 来执行并打印调试信息
+
+## Shell等待
+   * suspend
+   bash还提供了一种让bash执行暂停并等待信号的功能，就是suspend命令。它等待的是18号SIGCONT信号，这个信号本身的含义就是让一个处在T（stop）状态的进程恢复运行。使用方法：
+
+```bash
+   #!/bin/bash
+
+   pid=$$
+
+   echo "echo $pid"
+   #打开jobs control功能，在没有这个功能suspend无法使用，脚本中默认此功能关闭。
+   #我们并不推荐在脚本中开启此功能。
+   set -m
+
+   echo "Begin!"
+
+   echo $-
+
+   echo "Enter suspend stat:"
+
+   #让一个进程十秒后给本进程发送一个SIGCONT信号
+   ( sleep 10 ; kill -18 $pid ) &
+   #本进程进入等待
+   suspend
+
+   echo "Get SIGCONT and continue running."
+
+   echo "End!"
+```
 
 
 ## 函数返回值
@@ -161,7 +245,7 @@ bash中--后面的参数不会被当作选项解析.
 
 ## 简洁写法
    * `grep "abc" test.txt &> /dev/null`  
-   * `grep "abc" test.txt 2> /dev/null`   
+
 **备注**: crontab中简洁写法可能无效  
 
 ## grep stderr
@@ -171,6 +255,76 @@ bash中--后面的参数不会被当作选项解析.
    * `CMD 2>&1 | grep XXX ` 同时grep stdout和stderr
 
 ## Shell 文件读写
+
+文件描述符的复制：
+
+复制输入文件描述符：[n]<&word
+
+如果n没有指定数字，则默认复制0号文件描述符。word一般写一个已经打开的并且用来作为输入的描述符数字，表示将制订的n号描述符在制定的描述符上复制一个。如果word写的是“-”符号，则表示关闭这个文件描述符。如果word指定的不是一个用来输入的文件描述符，则会报错。
+
+复制输出文件描述符：[n]>&word
+
+复制一个输出的描述符，字段描述参考上面的输入复制，例子上面已经讲过了。这里还需要知道的就是1>&-表示关闭1号描述符。
+
+文件描述符的移动：
+
+移动输入描述符：[n]<&digit-
+
+移动输出描述符：[n]>&digit-
+
+这两个符号的意思都是将原有描述符在新的描述符编号上打开，并且关闭原有描述符。
+
+描述符新建：
+
+新建一个用来输入的描述符：[n]<word
+
+新建一个用来输出的描述符：[n]>word
+
+新建一个用来输入和输出的描述符：[n]<>word
+
+word都应该写一个文件路径，用来表示这个文件描述符的关联文件是谁。
+
+下面我们来看相关的编程例子：
+
+#!/bin/bash
+
+# example 1
+#打开3号fd用来输入，关联文件为/etc/passwd
+exec 3< /etc/passwd
+#让3号描述符成为标准输入
+exec 0<&3
+#此时cat的输入将是/etc/passwd，会在屏幕上显示出/etc/passwd的内容。
+cat
+
+#关闭3号描述符。
+exec 3>&-
+
+# example 2
+#打开3号和4号描述符作为输出，并且分别关联文件。
+exec 3> /tmp/stdout
+
+exec 4> /tmp/stderr
+
+#将标准输入关联到3号描述符，关闭原来的1号fd。
+exec 1>&3-
+#将标准报错关联到4号描述符，关闭原来的2号fd。
+exec 2>&4-
+
+#这个find命令的所有正常输出都会写到/tmp/stdout文件中，错误输出都会写到/tmp/stderr文件中。
+find /etc/ -name "passwd"
+
+#关闭两个描述符。
+exec 3>&-
+exec 4>&-
+以上脚本要注意的地方是，一般输入输出重定向都是放到命令后面作为后缀使用，所以如果单纯改变脚本的描述符，需要在前面加exec命令。这种用法也叫做描述符魔术。某些特殊符号还有一些特殊用法，比如：
+
+zorro@zorrozou-pc0 bash]$ > /tmp/out
+表示清空文件，当然也可以写成：
+
+[zorro@zorrozou-pc0 bash]$ :> /tmp/out
+因为”:”是一个内建命令，跟true是同样的功能，所以没有任何输出，所以这个命令清空文件的作用。
+
+
 ```bash
 echo 1234567890 > tmp
 exec 3<> tmp
@@ -182,3 +336,24 @@ cat tmp
 输出为 1234.67890
 
 **注意**: `3<>`, `<&3`, `&>3`,`3>&` 均不能有空格
+
+## 管道
+“|&”这种写法的含义是将command1标准输出和标准报错都跟command2的和准输入连
+
+## 受限的shell
+set -r
+
+## 后台作业
+Shell执行命令后，Ctrl+Z挂起程序执行(注意不是到后台执行)，并会提示作业号。此时可以使用`jobs`查看，使用`bg _作业号_`使其后台执行，`fg _作业号_`使其继续前台执行
+
+后台作业有两个特点：
+   1. 继承当前session的标准输出和标准错误
+   2. 不再继承当前session的标准输入；如果其试图读取标准输入，就会等待
+
+退出session，系统向该session发出SIGHUP信号，session将SIGHUP信号发给所有子进程，子进程收到SIGHUP信号后，自动退出。
+后台作业是否收到SIGHUP信号取决于`shopt | grep huponexit`参数。这个参数为off时，session退出的时候不会把SIGHUP信号发给后台任务。但如果如果后台进程与标准I/O有交互，其会退出。使用`disown`命令也会有该问题。解决办法是对后台任务的标准输入输出进行重定向.
+
+*备注: 实验时发现关于huponexit的描述只对登录交互session适用*
+
+一般情况下应该使用`nohup`命令. 通过`strace nohup 命令`可以发现。nohup将标准输入重定向到`/dev/null`, 将标准输出/标准错误重定向到 nohup.out，忽略了SIGHUP信号。
+需要注意的是，nohup命令不会自动把进程变为后台作业，必须使用`&`。

@@ -3,7 +3,7 @@
 ##变量替换与文件名替换
    * shell先作变量替换，然后作文件名替换
    * 双引号中不做文件名替换
-```
+```bash
 linxh@Master:~/Git/linux-devp-faq> x=*
 linxh@Master:~/Git/linux-devp-faq> echo $x
 database memory misc programming README.md runtime shell SUMMARY.md sysadmin
@@ -16,6 +16,17 @@ linxh@Master:~/Git/linux-devp-faq> echo "$x"
 ## 子字符串
    * `${var:start_pos:end_pos}`, -1 代表最后一个字符
    * `${var/src/replace}`, 将src替换
+   * `${parameter//pattern/string}`
+
+## 大小写转换
+```bash
+var=abcdefg
+echo ${var^} Abcdefg
+echo ${var^^} ABCDEFG
+var=ABCDEFG
+echo ${var,} aBCDEFG
+echo ${var,,} abcdefg
+```
 
 ## 获得脚本名称
    * 使用`sh test.sh` 或 `./test.sh`的方式运行脚本, $0即为脚本的名字
@@ -30,6 +41,7 @@ ${#VAR}
 ## 变量展开
    * ${param:+expr} 如果param设置并且不为空，展开expr
    * URL=${URL:-http://localhost:8080} 如果URL没有设置则设置为http://localhost:8080
+   * var=${var:=1000}  如果var未被赋值，则赋值成1000
 
 ## 检查一个变量是否存在
    * ${name:?error message}

@@ -63,7 +63,7 @@ net.ipv4.tcp_fin_timeout = 30 表示如果套接字由本端要求关闭，这�
 net.ipv4.tcp_keepalive_time = 1200 表示当keepalive起用的时候TCP发送keepalive消息的频度。
 net.ipv4.ip_local_port_range = 1024    65000 用于向外连接的端口范围。
 
-#SYN队列的长度，默认为1024，加大队列长度为8192，可以容纳更多等待连接的网络连接数。 
+#SYN队列的长度，默认为1024，加大队列长度为8192，可以容纳更多等待连接的网络连接数。
 net.ipv4.tcp_max_syn_backlog = 8192
 
 #系统同时保持TIME_WAIT套接字的最大数量
@@ -72,7 +72,9 @@ net.ipv4.tcp_max_tw_buckets = 5000 超过这个数TIME_WAIT套接字将立刻被
 
 ## SYN_RECV
 ```
-net.ipv4.tcp_synack_retries 
-net.ipv4.tcp_syncookies 
+net.ipv4.tcp_synack_retries
+net.ipv4.tcp_syncookies
 net.ipv4.tcp_max_syn_backlog  
 ```
+
+## /dev/tcp 与 /dev/udp

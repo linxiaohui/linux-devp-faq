@@ -15,9 +15,44 @@
       * 非可靠信号就是非实时信号
 
 使用命令 `kill -l` 查看所有信号
+程序中可以使用
+```c
+char *strsignal(int sig);
+```
+获取信号的名字（或sys_siglist数组. 详情 man strsignal）
+
+## sigaction
+```c
+struct sigaction {
+    void     (* sa_handler)(int);
+    void     (* sa_sigaction)(int, siginfo_t * , void * );
+    sigset_t   sa_mask;
+    int        sa_flags;
+    void     (* sa_restorer)(void);
+};
+```
+其中，`sa_mask`字段定义了一个信号集，其中的信号在信号处理函数执行期间被屏蔽，在信号处理函数被调用时，内核同时会屏蔽该信号，因此保证了在处理一个给定信号时，如果该信号再次发生，那么它会被阻塞到对前一个信号的处理结束为止（可靠信号，对不可靠信号而言信号可能丢失）。
+
+sa_flags字段指定对信号处理的一些选项，常用的选项及其含义说明`man sigaction`
+
 
 ## 屏蔽信号
+每一个进程都有一个信号屏蔽字(参见`/proc/self/status`): 当前要阻塞递送到该进程的信号集。
+对于每种可能的信号，该屏蔽字中都有一位与之对应。对于某种信号，若其对应为已设置，则它当前是被阻塞的。
+进程可以调用`sigprocmask`来检测和更改当前信号的屏蔽字。
+
 所谓屏蔽, 并不是禁止递送信号, 而是暂时阻塞信号的递送, 解除屏蔽后, 信号将被递送, 不会丢失。
+
+## 信号集
+信号种类数目超过一个整型所包含的位数，因此POSIX.1定义了数据结构`sigset_t`表示信号集，并且定义了以下信号集处理函数：
+```c
+#include <signal.h>
+int sigemptyset(sigset_t * set);
+int sigfillset(sigset_t * set);
+int sigaddset(sigset_t * set, int signum);
+int sigdelset(sigset_t * set, int signum);
+int sigismember(const sigset_t * set, int signum);
+```
 
 ## 非局部控制转移
 setjmp 和 sigsetjmp 的区别是: setjmp 不一定会恢复信号集合,而sigsetjmp可以保证恢复信号集合
@@ -45,7 +80,7 @@ if(pid!=0) exit();
 setsid();
 pid=fork();
 if(pid!=0) exit();
-chdir(“/”);
+chdir("/");
 close(0);close(1);close(2);
 stdfd = open ("/dev/null", O_RDWR);
 dup2(stdfd, STDOUT_FILENO);

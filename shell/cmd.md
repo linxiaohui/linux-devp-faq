@@ -95,6 +95,9 @@ CTRL+a+d
    * 停止会话(已连接的情况):
 $ exit  或 ctrl+d
 
+## tmux
+   在一个终端窗口中运行多个终端会话
+
 ## script命令
 script是将终端会话制成打印稿的命令。
 想要script在登录时就生效，可以将其加在shell profile(~/.profile)。

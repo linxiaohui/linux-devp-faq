@@ -185,6 +185,35 @@
    * 查看内存的频率
       `sudo dmidecode|grep -A 16 "Memory Device"|grep 'Speed'`
 
+## mapfile && readarray
+   * bash内建命令
+   * Read lines from the standard input into the indexed array variable array
+   * 需要注意的是如果使用 `cat /etc/passwd|mapfile passwd`，passwd变量不存在。因为内建命令放在管道中，bash会在subshell中进行处理。
+   * 使用 -u 参数
+
+## eval
+Bash內建命令，eval: eval [参数 ...]
+    将参数作为 shell 命令执行。
+
+    将 ARGs 合成一个字符串，用结果作为 shell 的输入，
+    并且执行得到的命令。
+
+    退出状态：
+    以命令的状态退出，或者在命令为空的情况下返回成功。
+
+## coproc
+coproc: coproc [名称] 命令 [重定向]
+    创建一个以 NAME 为名的副进程。
+
+    异步执行 COMMANDS 命令，在执行 shell 中的数组变量 NAME
+    的 0 号和 1 号元素作为文件描述符，以一个管道连接命令
+    分别作为命令的标准输出和输入设备。
+    默认的 NAME 是 "COPROC"。
+
+    退出状态：
+    返回 COMMAND 命令的退出状态。
+
+
 #其它工具
 
 ## fortune
