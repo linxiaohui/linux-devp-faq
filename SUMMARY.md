@@ -9,7 +9,7 @@
     * [注意事项](programming/lang.md)
     * [第三方库](programming/lib.md)
     * [其它工具](programming/tools.md)
-    
+
 * [运行与调试](runtime/README.md)
     * [环境](runtime/env.md)
     * [进程检查](runtime/pcheck.md)
@@ -23,12 +23,6 @@
     * [内存检查技术与工具](memory/lib.md)
     * [深入理解malloc](memory/malloc.md)
 
-* [系统管理](sysadmin/README.md)
-    * [网络](sysadmin/network.md)
-    * [磁盘](sysadmin/disk.md)
-    * [性能分析工具](sysadmin/performance.md)
-    * [操作系统管理](sysadmin/os.md)
-    
 * [Shell](shell/README.md)
     * [SHELL基础](shell/sh.md)
     * [终端相关](shell/terminal.md)
@@ -41,10 +35,18 @@
     * [SSH](shell/ssh.md)
     * [有趣的Linux命令](shell/funny.md)
 
+* [系统管理](sysadmin/README.md)
+    * [网络](sysadmin/network.md)
+    * [磁盘](sysadmin/disk.md)
+    * [性能分析工具](sysadmin/performance.md)
+    * [操作系统管理](sysadmin/os.md)
+    * [AppArmor](sysadmin/apparmor.md)
+    * [systemd](sysadmin/systemd.md)
+
 * [数据库开发](database/README.md)
     * [sybase](database/sybase.md)
     * [DB2](database/db2.md)
-    
+
 * [杂项](misc/README.md)
     * [桌面环境](misc/desktop.md)
     * [配置](misc/config.md)
