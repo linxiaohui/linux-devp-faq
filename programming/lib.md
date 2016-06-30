@@ -2,33 +2,15 @@
 
 ## ZeroMQ
 
-## libevent
-
-   * 如何使HTTP服务端知道客户端断开   
-可以给连接注册关闭回调, 但客户端强制断开连接时, 服务器并没有立即知道.
-```c
-evhttp_connection_set_closecb(req->evcon, on_close, NULL);
-```
-因为libevent在收到 HTTP 请求后,就不再监听读事件了,所以就不能通过 read() 返回 0 来知道连接断开, 
-只能通过 send() 导致 SIGPIPE 才能知道.   
-为了让服务器立即知道客户端的断开, 只需要重新监听 EV_READ 事件即可.
-```c
-struct bufferevent *bev = evhttp_connection_get_bufferevent(req->evcon);
-bufferevent_enable(bev, EV_READ);
-```
-
-## libev
-
-
 ## gSoap
-   * gsoap_2.8.17.zip 
+   * gsoap_2.8.17.zip
    * `./configure && make `
    * 若需要SSL但系统中没有安装zlib.h和OpenSSL
 ```bash
-export C_INCLUDE_PATH=$HOME/zlib-1.2.8:$HOME/openssl-1.0.1g/include 
-export CPLUS_INCLUDE_PATH=$HOME/zlib-1.2.8:$HOME/openssl-1.0.1g/include 
-export LIBRARY_PATH="$HOME/openssl-1.0.1g/:$HOME/zlib-1.2.8" 
-export LIBS=-ldl 
+export C_INCLUDE_PATH=$HOME/zlib-1.2.8:$HOME/openssl-1.0.1g/include
+export CPLUS_INCLUDE_PATH=$HOME/zlib-1.2.8:$HOME/openssl-1.0.1g/include
+export LIBRARY_PATH="$HOME/openssl-1.0.1g/:$HOME/zlib-1.2.8"
+export LIBS=-ldl
 ```
    * 原因  
 通过分析编译过程和查看stdsoap2.cpp, 对soap_ssl_init函数的定义需要WITH_OPENSSL和HAVE_OPENSSL_SSL_H
@@ -37,33 +19,33 @@ export LIBS=-ldl
 在/configure生成config.h时，若OpenSSL路径不准确则不会定义相关的宏  
 可以修改 config.h
 ```c
-#define HAVE_OPENSSL_SSL_H 1 
+#define HAVE_OPENSSL_SSL_H 1
 ```
 
    * 报错`undefined reference to 'soap_ssl_init'`
 原因与上面描述类似.   
       * 安装OpenSSL
       * -DWITH_OPENSSL.
-      * 编译时链接 stdsoap2.cpp 
+      * 编译时链接 stdsoap2.cpp
 
 * 若不需要SSL
 ```bash
-./configure --disable-ssl && make 
+./configure --disable-ssl && make
 ```
 
    * 若需要32位的库
 ```bash
-export CFLAGS=-m32 
-export CXXFLAGS=-m32 
+export CFLAGS=-m32
+export CXXFLAGS=-m32
 ```
 
 ## Axis2C
 gSoap通过工具从WebService的wsdl将每一个服务生成一个函数和其输入输出结构;
 调用某个服务的时候, 填充其输入然后调用相应的函数, 获取输出.
 
-有一类应用提供的不同的服务的WebService接口一样的, 不同的服务需要的参数放在同样的字段中; 
+有一类应用提供的不同的服务的WebService接口一样的, 不同的服务需要的参数放在同样的字段中;
 这种场景下使用gSoap的话会根据提供的服务产生大量结构相同输入输出接口; 为了抽象WebService调用过程, 可以考虑使用Axis2C.
-Axis2C时Apache Axis2的C语言实现. 
+Axis2C时Apache Axis2的C语言实现.
 
    * 编译
 ```bash
@@ -104,11 +86,11 @@ Action在HTTP Body的SOAP报文中.
          * configure.ac: AC_CHECK_HEADERS([sys/sockio.h]) 检查文件是否存在
          * 修改util/src/platforms/unix/uuid_gen_unix.c, 若定义了`HAVE_SYS_SOCKIO_H`才需要`#include <sys/sockio.h>`
       * 报错`#include file <getopt.h> not found`
-         * configure.ac: AC_CHECK_HEADERS([getopt.h]) 
+         * configure.ac: AC_CHECK_HEADERS([getopt.h])
          * 修改util/include/platforms/unix/axutil_unix.h, 若定义`HAVE_GETOPT_H`才需要`#include <getopt.h>`
       * 报错`Unexpected text __useconds encountered`
          * util/include/platforms/unix/axutil_unix.h: 根据unistd.h中声明的extern int usleep(useconds_t)修改
-         * AIX中无 __useconds_t
+         * AIX中无 `__useconds_t`
 
 ## libxml2
 
@@ -123,10 +105,10 @@ request = ghttp_request_new();
 /* 使用HTTP request对象之前必须设置适当的参数 */
 /* 设置URI */
 ghttp_set_uri(request, "http://localhost:8080/index.html");
-/* 
-设置HTTP请求的header  ghttp_set_header(), 
-设置代理服务器        ghttp_set_proxy(), 
-设置HTTP请求的body    ghttp_set_body(). 
+/*
+设置HTTP请求的header  ghttp_set_header(),
+设置代理服务器        ghttp_set_proxy(),
+设置HTTP请求的body    ghttp_set_body().
 */
 ghttp_set_header(request, http_hdr_Connection, "close");
 
@@ -152,13 +134,12 @@ fwrite(ghttp_get_body(request), ghttp_get_body_len(request), 1, stdout);
 调用 ghttp_set_uri() 设置新的资源URI,
 调用 ghttp_prepare() 准备,
 调用 ghttp_clean() 清理原缓存等
-调用 ghttp_process() 进行HTTP请求 
+调用 ghttp_process() 进行HTTP请求
 这种方式可以充分利用已有的资源, 提高效率
 */
 
 /* 释放资源 */
 ghttp_request_destroy(request);
-
 ```
 
 ## OpenCC
@@ -168,4 +149,3 @@ opencc的用法:
    * 查看帮助 `opencc --help`   
    * 简体转繁体 `opencc -i <filename> -c zhs2zht.ini`
    * 繁体转简体 `opencc -i <filename> -c zht2zhs.ini`
-

@@ -8,6 +8,8 @@
     * [网络编程](programming/network.md)
     * [注意事项](programming/lang.md)
     * [第三方库](programming/lib.md)
+        * [libevent与libev](programming/libevent.md)
+    * [autotools](programming/autotools.md)
     * [其它工具](programming/tools.md)
 
 * [运行与调试](runtime/README.md)
@@ -19,6 +21,7 @@
 
 * [内存](memory/README.md)
     * [操作系统命令](memory/linux.md)
+        * [OOM](memory/oom,md)
     * [Glibc函数](memory/glibc.md)
     * [内存检查技术与工具](memory/lib.md)
     * [深入理解malloc](memory/malloc.md)
@@ -42,6 +45,11 @@
     * [操作系统管理](sysadmin/os.md)
     * [AppArmor](sysadmin/apparmor.md)
     * [systemd](sysadmin/systemd.md)
+
+* [内核](kernel/READMEmd)
+    * [重新编译内核](kernel/rebuild.md)
+    * [内核模块开发初步](kernel/module.md)
+    * [GCC内联汇编](kernel/gnu_asm.md)
 
 * [数据库开发](database/README.md)
     * [sybase](database/sybase.md)
