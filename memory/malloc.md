@@ -1,4 +1,60 @@
-# More About malloc
+## ptmalloc
+
+glibc使用`ptmalloc`库进行分配.  它通过两个系统调用向kernel申请内存:
+   * brk() sets the end of the process's data segment.
+   * mmap() creates a new VMA and passes it to the allocator.
+
+`ptmalloc`根据申请的内存大小决定使用`brk`还是`mmap`: 如果申请的内存大于`M_MMAP_THRESHOLD`, 使用`mmap`, 否则调用`brk`.
+默认`M_MMAP_THRESHOLD`为128KB, 可以通过`mallopt`更改.
+
+## deferred page allocation
+对比一下两个程序
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#define MEGABYTE 1024*1024
+int main(int argc, char * argv[])
+{
+  void * myblock = NULL;
+  int count = 0;
+  while (1)
+  {
+    myblock = (void * ) malloc(MEGABYTE);
+    if (!myblock) break;
+    printf("Currently allocating %d MB\n", ++count);
+  }
+  exit(0);
+}
+```
+与
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MEGABYTE 1024*1024
+int main(int argc, char * argv[])
+{
+  void * myblock = NULL;
+  int count = 0;
+  while(1)
+  {
+    myblock = (void * ) malloc(MEGABYTE);
+    if (!myblock) break;
+    memset(myblock,1, MEGABYTE);
+    printf("Currently allocating %d MB\n",++count);
+  }
+  exit(0);
+}
+```
+在64位Linux上使用`gcc -m32`编译两个程序并运行, 第一个程序比第二个程序能申请到更多的内存,
+并且程序A因malloc申请失败而退出, 程序B被kill.
+因为Linux采用`deferred page allocation`, 即`optimistic memory allocation`, 只有在使用时才内存才真正分配.
+程序A因地址空间用尽malloc失败.
+
+可以在程序中加`sleep`, 运行时使用`watch -n 1 free`观察free的值的变化的方式来验证.
+
+试验的时候先`swapoff -a`关闭swap.
+
 
 ## free的内存不归还给操作系统
 测试程序
@@ -6,14 +62,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
 #define SIZE 1024
 #define PAGE 10240
-
 int main()
 {
-    char *a[SIZE];
-    char *b[SIZE];
+    char * a[SIZE];
+    char * b[SIZE];
     printf("before malloc\n");
     sleep(10);
     for(int i=0; i<SIZE; i++)
@@ -31,14 +85,13 @@ int main()
         free(b[j]);
     }
     printf("free OK\n");
-    /*
-    char * ptr=malloc(PAGE);
+    /*char * ptr=malloc(PAGE);
     free(ptr);
-    printf("All free\n");
-    */
+    printf("All free\n");*/
     sleep(30);
 }
 ```
+
 通过top -p $(pidof _progname_) 可以看到malloc阶段占用内存不断变大；但free完成后内存占用没有减少，
 应用程序已经通过调用free将内存释放，但glic没有将内存归还给操作系统。
 
@@ -55,9 +108,9 @@ OpenSUSE 13.2（Glib 2.19）中发现：多线程的程序中malloc内存时，�
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
- 
+
 volatile int start = 0;
- 
+
 void * run( void * p)
 {
     while(1)
@@ -65,7 +118,7 @@ void * run( void * p)
         if(start%3==0)
         {
             printf("Thread malloc\n");
-            char *buf = malloc(1024);
+            char * buf = malloc(1024);
         }
         sleep(1);
     }
@@ -108,4 +161,3 @@ int main()
    * `MALLOC_ARENA_MAX_`: 最大memory pools数量（不论几核）。实践中有建议设其为4
 
 程序中可以使用mallopt(M_ARENA_MAX, 4)修改
-

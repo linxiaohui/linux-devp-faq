@@ -1,7 +1,57 @@
 # GNU C内联汇编(AT&T语法)
 
+## AT&T 风格语法说明
+   1. 使用$标识立即数
+   2. 寄存器前面加上%
+   3. 源操作数在前, 目标操作数在后
+   4. 使用$获取变量地址
+   5. 长跳转使用：ljmp $section, $offset
 
-# 基本格式
+## 示例
+```asm
+cpuid.s View the CPUID Vendor ID string using C library calls
+.section .data
+output:
+    .asciz "The processor Vendor ID is %s\n"
+.section .bss
+    .lcomm buffer, 12
+.section .text
+.global main
+main:
+    movl $0, %eax
+    cpuid
+    movl $buffer, %edi
+    movl %ebx, (%edi)
+    movl %edx, 4(%edi)
+    movl %ecx, 8(%edi)
+    pushl $buffer
+    pushl $output
+    call printf
+    addl $8, %esp
+    pushl $0
+    call exit
+```
+
+## 伪指令说明：
+
+| 伪指令 | 说明  |
+| ------ | ---- |
+| .ascii | 定义字符串，没有\0结束标记 |
+| .asciz | 有\0结束标记 |
+| .byte  | 字节 |
+| .int   | 32位 |
+| .long  | 32位 |
+| .shot  | 16位 |
+| .lcomm | 对于上面的例子是声明12字节的缓冲区，l标识local，仅当前汇编程序可用 |
+| .comm  | 通用内存区域 |
+| .equ   | .equ  LINUX_SYS_CALL, 0x80
+movl $ LINUX_SYS_CALL, %eax
+说明：equ不是宏而是常量，会占据数据/代码段空间 |
+
+## 常用指令
+
+
+# 内联基本格式
    * 指令必须在引号里
    * 指令超过一条，必须使用`\n`分隔
 ```c
