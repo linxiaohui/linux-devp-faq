@@ -24,6 +24,11 @@ Mem:               used=Used+Buffer+Cache / free=Free
 ## 内核空间的内存
 `slabtop -s c | head`
 
+`cat /proc/slabinfo |awk 'BEGIN{sum=0;}{sum=sum+$3*$4;}END{print sum/1024/1024}'`
+
+`grep PageTables /proc/meminfo`
+
+
 ## 共享内存配置
    * /proc/sys/kernel/shmmax 参数定义共享内存段的最大尺寸
    * /proc/sys/kernel/shmmni 设置系统范围内共享内存段的最大数量
