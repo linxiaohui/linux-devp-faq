@@ -145,6 +145,19 @@ jmp            .PLT0@PC
 
 ![动态解析示意图](./resolve.png)
 
+# ELF文件格式
+
+Executable and Linking Format有三种主要类型:
+   * 适于连接的可重定位文件(relocatable file), 可与其它目标文件一起创建可执行文件和共享目标文件
+   * 适于执行的可执行文件(executable file), 用于提供程序的进程映像，加载的内存执行
+   * 共享目标文件(shared object file), 连接器可将它与其它可重定位文件和共享目标文件连接成其它的目标文件, 动态连接器又可将它与可执行文件和其它共享目标文件结合起来创建一个进程映像
+
+使用`file`命令查看ELF格式的文件可以显示其类型
+
+## ELF sections
+   `.init`: 程序开始运行时,在main函数被调用之前执行的代码
+   `.fini`: 程序正常退出时排执行的代码
+   
 
 
 # 参考资料
@@ -152,4 +165,3 @@ jmp            .PLT0@PC
    2. [共享库函数调用原理](http://blog.csdn.net/absurd/article/details/3169860)
    3. [Linux GOT与PLT](http://www.programlife.net/linux-got-plt.html)
    4. [ELF文件的加载和动态链接过程](http://jzhihui.iteye.com/blog/1447570)
-   5. []()
