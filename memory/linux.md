@@ -1,5 +1,20 @@
 # Linux中内存相关命令与配置
 
+## 内存布局
+
+![32位经典内存布局](linux-layout-32.png)
+
+![32位默认内存布局](linux-layout-32-defalut.png)
+
+加入了几种Random offset随机偏移, 增加了内存溢出攻击的难度
+堆向上, mmap向下增长
+
+
+
+![64位内存布局](linux-layout-64.png)
+
+
+
 ## 查看进程内存使用情况
    * `top -d 1 -p pid [,pid ...]`  //设置为delay 1s，默认是delay 3s   
 如果想根据内存使用量进行排序，可以shift + m（Sort by memory usage）

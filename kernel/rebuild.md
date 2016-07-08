@@ -1,12 +1,13 @@
 # 重新编译内核
 
 ## 清除临时文件、中间文件和配置文件。
-(1) make clean
+   * (1) make clean
          remove most generated  files but keep the config
-(2) make mrproper
+   * (2) make mrproper
           remove all generated  files + config files
-(3) make distclean
+   * (3) make distclean
           mrproper + remove editor backup and patch files
+
 ## 确定目标系统的软硬件配置情况，比如CPU的类型、网卡的型号、所需支持的网络协议等。
 
 ## 使用如下命令之一配置内核。
