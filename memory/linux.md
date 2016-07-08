@@ -4,7 +4,7 @@
 
 ![32位经典内存布局](linux-layout-32.png)
 
-![32位默认内存布局](linux-layout-32-defalut.png)
+![32位默认内存布局](linux-layout-32-default.png)
 
 加入了几种Random offset随机偏移, 增加了内存溢出攻击的难度
 堆向上, mmap向下增长
