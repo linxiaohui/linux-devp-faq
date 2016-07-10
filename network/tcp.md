@@ -56,11 +56,17 @@ CLOSED->LISTEN->SYN_RCVD->ESTABLISHED->CLOSE_WAIT->LAST_ACK->CLOSED
 
 # SYN Flood 原理
 进行三次握手时, 攻击软件向被攻击的服务器发送SYN连接请求, 但是其中地址是伪造的(例如随机伪造);
-服务器在收到连接请求时将标志位ACK和SYN置1发送给客户端, 但是请求的IP地址是伪造的, 服务器不会收到握手第三步的`ACK`.
+服务器在收到连接请求时将标志位ACK和SYN置1发送给客户端, 但是请求的IP地址是伪造的(IP存在会受到`RST`), 服务器不会收到握手第三步的`ACK`.
 这种情况下服务器一般会重试(再次发送SYN+ACK)并等待一段时间后(SYN Timeout)丢弃这个未完成的连接. 一般来说SYM Timeout是分钟的量级.
 
 如果恶意的攻击者大量模拟这种情况, 服务器端将为了维护一个非常大的半连接列表而消耗非常多的资源, 同时对这个列表中的IP进行SYN+ACK的重试.
 这样正常的客户端得不到服务器的响应, 服务器端受到了SYN Flood攻击.
+
+# 半连接队列长度
+`listen`参数`backlog`在Linux 2.2之后表示的是已完成三次握手但还未被应用程序accept的队列长度; 半连接队列长度`tcp_max_syn_backlog`(man 7 tcp).
+查看内核中`inet_csk_reqsk_queue_is_full()`.
+
+`net.core.somaxconn`是`listen`参数`backlog`的上限(如果设置backlog大于net.core.somaxconn的话就会取net.core.somaxconn的值), 全连接队列长度.
 
 # KeepAlive
 以服务器端为例, 如果当前server端检测到超过一定时间没有数据传输, 那么会向client端发送一个`keep-alive`包(ACK和当前TCP序列号减一的组合),
