@@ -1,5 +1,416 @@
 #[libevent](http://monkey.org/~provos/libevent/)
 
+支持将SOCKET, 管道, 信号, 以及定时器统一为通用的逻辑, 给开发人员提供了一个简单高效的异步网络编程库.
+
+创建`libevent`服务器的基本方法是: 注册当发生某一事件(如接受来自客户端的连接)时应该执行的函数, 然后调用`event_dispatch()`, 在应用程序运行时可以在事件队列中添加(注册)或删除(取消注册)事件.
+
+# 示例
+
+## 回显服务器
+```c
+#include <event.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#define SERVER_PORT 8080
+int debug = 0;
+struct client {
+  int fd;
+  struct bufferevent * buf_ev;
+};
+
+int setnonblock(int fd)
+{
+  int flags;
+
+  flags = fcntl(fd, F_GETFL);
+  flags |= O_NONBLOCK;
+  fcntl(fd, F_SETFL, flags);
+}
+
+/*
+当客户端套接字有要读的数据时调用它, 写回客户端. 套接字仍然打开, 可以接受新请求
+*/
+void buf_read_callback(struct bufferevent * incoming, void * arg)
+{
+  struct evbuffer * evreturn;
+  char * req;
+  req = evbuffer_readline(incoming->input);
+  if (req == NULL)
+    return;
+  evreturn = evbuffer_new();
+  evbuffer_add_printf(evreturn,"You said %s\n",req);
+  bufferevent_write_buffer(incoming,evreturn);
+  evbuffer_free(evreturn);
+  free(req);
+}
+
+/*当有要写的数据时调用它*/
+void buf_write_callback(struct bufferevent * bev, void * arg)
+{
+}
+
+/*当出现错误时调用它. 客户端中断连接, 在出现错误的所有场景中, 关闭客户端套接字.
+从事件列表中删除客户端套接字的事件条目, 释放客户端结构的内存*/
+void buf_error_callback(struct bufferevent * bev, short what, void * arg)
+{
+  struct client * client = (struct client * )arg;
+  bufferevent_free(client->buf_ev);
+  close(client->fd);
+  free(client);
+}
+
+/*
+当接受连接时调用此函数. 接受到客户端的连接, 添加客户端套接字信息和一个 bufferevent 结构,
+在事件结构中为客户端套接字上的读/写/错误事件添加回调函数; 作为参数传递客户端结构(和嵌入的 eventbuffer 和客户端套接字).
+每当对应的客户端套接字包含读、写或错误操作时，调用对应的回调函数.
+*/
+void accept_callback(int fd, short ev, void * arg)
+{
+  int client_fd;
+  struct sockaddr_in client_addr;
+  socklen_t client_len = sizeof(client_addr);
+  struct client * client;
+
+  client_fd = accept(fd,
+                     (struct sockaddr * )&client_addr,
+                     &client_len);
+  if (client_fd < 0)
+  {
+      warn("Client: accept() failed");
+      return;
+  }
+  setnonblock(client_fd);
+  client = calloc(1, sizeof(* client));
+  if (client == NULL)
+    err(1, "malloc failed");
+  client->fd = client_fd;
+
+  client->buf_ev = bufferevent_new(client_fd,
+                                   buf_read_callback,
+                                   buf_write_callback,
+                                   buf_error_callback,
+                                   client);
+  bufferevent_enable(client->buf_ev, EV_READ);
+}
+
+int main(int argc, char ** argv)
+{
+  int socketlisten;
+  struct sockaddr_in addresslisten;
+  struct event accept_event;
+  int reuse = 1;
+  event_init();
+  socketlisten = socket(AF_INET, SOCK_STREAM, 0);
+  if (socketlisten < 0)
+  {
+      fprintf(stderr,"Failed to create listen socket");
+      return 1;
+  }
+  memset(&addresslisten, 0, sizeof(addresslisten));
+  addresslisten.sin_family = AF_INET;
+  addresslisten.sin_addr.s_addr = INADDR_ANY;
+  addresslisten.sin_port = htons(SERVER_PORT);
+  if (bind(socketlisten, (struct sockaddr * )&addresslisten,
+           sizeof(addresslisten)) < 0)
+  {
+      fprintf(stderr,"Failed to bind");
+      return 1;
+  }
+  if (listen(socketlisten, 5) < 0)
+  {
+      fprintf(stderr,"Failed to listen to socket");
+      return 1;
+  }
+  setsockopt(socketlisten,
+             SOL_SOCKET,
+             SO_REUSEADDR,
+             &reuse,
+             sizeof(reuse));
+  setnonblock(socketlisten);
+  event_set(&accept_event,
+            socketlisten,
+            EV_READ|EV_PERSIST,
+            accept_callback,
+            NULL);
+  event_add(&accept_event,
+            NULL);
+  event_dispatch();
+  close(socketlisten);
+  return 0;
+}
+```
+
+## HTTP 示例
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>     //for getopt, fork
+#include <string.h>     //for strcat
+#include <sys/queue.h>  //for struct evkeyvalq
+#include <event.h>
+#include <evhttp.h>     //for http
+#include <signal.h>
+
+#define MYHTTPD_SIGNATURE   "myhttpd v 0.0.1"
+//处理模块
+void httpd_handler(struct evhttp_request * req, void * arg) {
+    char output[2048] = "\0";
+    char tmp[1024];
+    //获取客户端请求的URI(使用evhttp_request_uri或直接req->uri)
+    const char * uri;
+    uri = evhttp_request_uri(req);
+    sprintf(tmp, "uri=%s\n", uri);
+    strcat(output, tmp);
+    sprintf(tmp, "uri=%s\n", req->uri);
+    strcat(output, tmp);
+    //decoded uri
+    char * decoded_uri;
+    decoded_uri = evhttp_decode_uri(uri);
+    sprintf(tmp, "decoded_uri=%s\n", decoded_uri);
+    strcat(output, tmp);
+    //解析URI的参数(即GET方法的参数)
+    struct evkeyvalq params;
+    evhttp_parse_query(decoded_uri, {U+00B6}ms);
+    sprintf(tmp, "q=%s\n", evhttp_find_header({U+00B6}ms, "q"));
+    strcat(output, tmp);
+    sprintf(tmp, "s=%s\n", evhttp_find_header({U+00B6}ms, "s"));
+    strcat(output, tmp);
+    free(decoded_uri);
+    //获取POST方法的数据
+    char * post_data = (char * ) EVBUFFER_DATA(req->input_buffer);
+    sprintf(tmp, "post_data=%s\n", post_data);
+    strcat(output, tmp);
+    /*具体的：可以根据GET/POST的参数执行相应操作，然后将结果输出*/
+    /*输出到客户端*/
+    //HTTP header
+    evhttp_add_header(req->output_headers, "Server", MYHTTPD_SIGNATURE);
+    evhttp_add_header(req->output_headers, "Content-Type", "text/plain; charset=UTF-8");
+    evhttp_add_header(req->output_headers, "Connection", "close");
+    //输出的内容
+    struct evbuffer * buf;
+    buf = evbuffer_new();
+    evbuffer_add_printf(buf, "It works!\n%s\n", output);
+    evhttp_send_reply(req, HTTP_OK, "OK", buf);
+    evbuffer_free(buf);
+}
+
+//当向进程发出SIGTERM/SIGHUP/SIGINT/SIGQUIT的时候，终止event的事件侦听循环
+void signal_handler(int sig) {
+    switch (sig) {
+        case SIGTERM:
+        case SIGHUP:
+        case SIGQUIT:
+        case SIGINT:
+            event_loopbreak();  //终止侦听event_dispatch()的事件侦听循环，执行之后的代码
+            break;
+    }
+}
+int main(int argc, char * argv[]) {
+    //自定义信号处理函数
+    signal(SIGHUP, signal_handler);
+    signal(SIGTERM, signal_handler);
+    signal(SIGINT, signal_handler);
+    signal(SIGQUIT, signal_handler);
+    //默认参数
+    char * httpd_option_listen = "0.0.0.0";
+    int httpd_option_port = 8080;
+    int httpd_option_daemon = 0;
+    int httpd_option_timeout = 120; //in seconds
+    //获取参数
+    int c;
+    while ((c = getopt(argc, argv, "l:p:dt:h")) != -1) {
+        switch (c) {
+        case 'l' :
+            httpd_option_listen = optarg;
+            break;
+        case 'p' :
+            httpd_option_port = atoi(optarg);
+            break;
+        case 'd' :
+            httpd_option_daemon = 1;
+            break;
+        case 't' :
+            httpd_option_timeout = atoi(optarg);
+             break;
+        case 'h' :
+        default :
+            exit(EXIT_SUCCESS);
+        }
+    }
+    //判断是否设置了-d，以daemon运行
+    if (httpd_option_daemon) {
+        pid_t pid;
+        pid = fork();
+        if (pid < 0) {
+            perror("fork failed");
+            exit(EXIT_FAILURE);
+        }
+        if (pid > 0) {
+            //生成子进程成功，退出父进程
+            exit(EXIT_SUCCESS);
+        }
+    }
+    /*使用libevent创建HTTP Server*/
+    //初始化event API
+    event_init();
+    //创建一个http server
+    struct evhttp * httpd;
+    httpd = evhttp_start(httpd_option_listen, httpd_option_port);
+    evhttp_set_timeout(httpd, httpd_option_timeout);
+    //指定generic callback
+    evhttp_set_gencb(httpd, httpd_handler, NULL);
+    //也可以为特定的URI指定callback
+    //evhttp_set_cb(httpd, "/", specific_handler, NULL);
+    //循环处理events
+    event_dispatch();
+    evhttp_free(httpd);
+    return 0;
+}
+```
+重要函数:
+```c
+char * evhttp_encode_uri(const char * uri);
+char * evhttp_decode_uri(const char * uri);
+const char *evhttp_find_header(const struct evkeyvalq * , const char * );
+int evhttp_remove_header(struct evkeyvalq * , const char * );
+int evhttp_add_header(struct evkeyvalq * , const char * , const char * );
+void evhttp_clear_headers(struct evkeyvalq * );
+char * evhttp_htmlescape(const char * html);
+```
+
+
+## 定时器 示例
+```c
+#include <sys/types.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <event.h>
+#include <evhttp.h>
+#define RELOAD_TIMEOUT 5
+#define DEFAULT_FILE "sample.html"
+char *filedata;
+time_t lasttime = 0;
+char filename[80];
+int counter = 0;
+
+void read_file()
+{
+  int size = 0;
+  char * data;
+  struct stat buf;
+
+  stat(filename,&buf);
+
+  if (buf.st_mtime > lasttime)
+    {
+      if (counter++)
+        fprintf(stderr,"Reloading file: %s",filename);
+      else
+        fprintf(stderr,"Loading file: %s",filename);
+
+      FILE * f = fopen(filename, "rb");
+      if (f == NULL)
+      {
+          fprintf(stderr,"Couldn't open file\n");
+          exit(1);
+      }
+      fseek(f, 0, SEEK_END);
+      size = ftell(f);
+      fseek(f, 0, SEEK_SET);
+      data = (char * )malloc(size+1);
+      fread(data, sizeof(char), size, f);
+      filedata = (char * )malloc(size+1);
+      strcpy(filedata,data);
+      fclose(f);
+      fprintf(stderr," (%d bytes)\n",size);
+      lasttime = buf.st_mtime;
+    }
+}
+
+void load_file()
+{
+  struct event * loadfile_event;
+  struct timeval tv;
+  read_file();
+  tv.tv_sec = RELOAD_TIMEOUT;
+  tv.tv_usec = 0;
+  loadfile_event = malloc(sizeof(struct event));
+  evtimer_set(loadfile_event,
+              load_file,
+              loadfile_event);
+
+  evtimer_add(loadfile_event,
+              &tv);
+}
+
+void generic_request_handler(struct evhttp_request * req, void * arg)
+{
+  struct evbuffer * evb = evbuffer_new();
+  evbuffer_add_printf(evb, "%s",filedata);
+  evhttp_send_reply(req, HTTP_OK, "Client", evb);
+  evbuffer_free(evb);
+}
+
+int main(int argc, char * argv[])
+{
+  short           http_port = 8081;
+  char          * http_addr = "192.168.1.110";
+  struct evhttp * http_server = NULL;
+
+  if (argc > 1)
+  {
+      strcpy(filename,argv[1]);
+      printf("Using %s\n",filename);
+  }
+  else
+  {
+      strcpy(filename,DEFAULT_FILE);
+  }
+  event_init();
+  load_file();
+  http_server = evhttp_start(http_addr, http_port);
+  evhttp_set_gencb(http_server, generic_request_handler, NULL);
+  fprintf(stderr, "Server started on port %d\n", http_port);
+  event_dispatch();
+}
+```
+# bufferevent
+```c
+struct bufferevent {
+    struct event_base * ev_base;  
+    const struct bufferevent_ops * be_ops;  
+    struct event ev_read;  
+    struct event ev_write;  
+    struct evbuffer * input;  
+    struct evbuffer * output;                                                                                  
+    bufferevent_data_cb readcb;                                                                                                                 bufferevent_data_cb writecb;
+    bufferevent_event_cb errorcb;  
+};
+```
+`struct bufferevent`内置了读/写两个event和对应的缓冲区. 当有数据被读入(input)的时候`readcb`被调用; 当output被输出完成的时候, `writecb`被调用;
+当网络I/O出现错误, 如链接中断, 超时或其他错误时, `errorcb`被调用
+
+## 使用bufferevent的过程
+   1. 设置sock为非阻塞的
+```c
+evutil_make_socket_nonblocking(fd);
+```
+   2. 使用`bufferevent_socket_new`创建一个`struct bufferevent * bev`, 关联该sockfd, 托管给event_base
+   3. 调用`bufferevent_setcb`设置读,写,错误处理对应的回调函数
+   4. 调用`bufferevent_enable`启用读写事件
+
+# 杂项
+
 * 如何使HTTP服务端知道客户端断开   
 可以给连接注册关闭回调, 但客户端强制断开连接时, 服务器并没有立即知道.
 ```c
