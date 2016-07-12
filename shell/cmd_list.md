@@ -258,3 +258,6 @@ coproc: coproc [名称] 命令 [重定向]
 ## nmap
    * 获取指定IP的操作系统信息
    * `nmap -sS -O _ip_address_`
+
+## flock
+   * flock是"劝告性"锁, 文件可以被其它进程操作
