@@ -52,18 +52,18 @@ net.ipv4.netfilter.ip_conntrack_tcp_timeout_time_wait = 120
 net.ipv4.netfilter.ip_conntrack_tcp_timeout_close_wait = 60
 net.ipv4.netfilter.ip_conntrack_tcp_timeout_fin_wait = 120
 
-#当出现SYN等待队列溢出时，启用cookies来处理，可防范少量SYN攻击，默认为0，表示关闭
-net.ipv4.tcp_syncookies = 1 表示开启SYN Cookies
+#当出现SYN等待队列溢出时, 启用cookies来处理, 可防范少量SYN攻击. 默认为0表示关闭
+net.ipv4.tcp_syncookies = 1 ;开启SYN Cookies
 
 #允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；
-net.ipv4.tcp_tw_reuse = 1 表示开启重用。
+net.ipv4.tcp_tw_reuse = 1      ;开启重用
 
-net.ipv4.tcp_tw_recycle = 1 表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。
-net.ipv4.tcp_fin_timeout = 30 表示如果套接字由本端要求关闭，这个参数决定了它保持在FIN-WAIT-2状态的时间。
-net.ipv4.tcp_keepalive_time = 1200 表示当keepalive起用的时候TCP发送keepalive消息的频度。
-net.ipv4.ip_local_port_range = 1024    65000 用于向外连接的端口范围。
+net.ipv4.tcp_tw_recycle = 1    ;开启TCP连接中TIME-WAIT sockets的快速回收.默认为0表示关闭
+net.ipv4.tcp_fin_timeout = 30  ;如果套接字由本端要求关闭, 它保持在FIN-WAIT-2状态的时间
+net.ipv4.tcp_keepalive_time = 1200  ;当keepalive起用的时候TCP发送keepalive消息的频度
+net.ipv4.ip_local_port_range = 1024	61000 ;用于向外连接的端口范围。
 
-#SYN队列的长度，默认为1024，加大队列长度为8192，可以容纳更多等待连接的网络连接数。
+#SYN队列的长度, 默认为1024, 加大队列长度为8192. 可以容纳更多等待连接的网络连接数
 net.ipv4.tcp_max_syn_backlog = 8192
 
 #系统同时保持TIME_WAIT套接字的最大数量

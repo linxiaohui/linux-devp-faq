@@ -187,28 +187,32 @@ Unit之间可以存在依赖关系。
 
 ## Unit 的配置文件
 
-每一个 Unit 都有一个配置文件，告诉 Systemd 怎么启动这个 Unit. 配置文件位于`/etc/systemd/system/`, 多是符号链接(到`/lib/systemd/system`中的文件)。
+每一个 Unit 都有一个配置文件，告诉 Systemd 怎么启动这个 Unit. 配置文件位于`/etc/systemd/system/`,
+多是符号链接(到`/lib/systemd/system`中的文件).
+
 `sudo systemctl enable nginx`相当于
+
 `sudo ln -s /lib/systemd/system/nginx.service /etc/systemd/system/multi-user.target.wants/nginx.service`
 
 ### 文件状态
-`systemctl list-unit-files`命令用于列出所有配置文件。
+`systemctl list-unit-files`命令用于列出所有配置文件
+
 `systemctl list-unit-files --type=service`列出指定类型的配置文件
 
-这个列表显示每个配置文件的状态STATE，一共有四种。
-`enabled`：已建立启动链接
-`disabled`：没建立启动链接
-`static`：该配置文件没有[Install]部分（无法执行），只能作为其他配置文件的依赖
-`masked`：该配置文件被禁止建立启动链接
+配置文件的状态STATE, 一共有四种:
+   * `enabled`  : 已建立启动链接
+   * `disabled` : 没建立启动链接
+   * `static`   : 该配置文件没有[Install]部分(无法执行),只能作为其他配置文件的依赖
+   * `masked`   : 该配置文件被禁止建立启动链接
 
 从配置文件的状态无法看出Unit是否正在运行. 使用`systemctl status`
 
-一旦修改配置文件，就要让 SystemD 重新加载配置文件，然后重新启动，否则修改不会生效。
-`sudo systemctl daemon-reload`
-`sudo systemctl restart nginx.service`
+一旦修改配置文件, 就要让systemd重新加载配置文件, 然后重新启动; 否则修改不会生效
+   * `sudo systemctl daemon-reload`
+   * `sudo systemctl restart nginx.service`
 
 ###  配置文件的格式
-`systemctl cat` 命令可以用来查看配置文件，例如 `systemctl cat ssh`显示ssh.service（默认）
+`systemctl cat` 命令可以用来查看配置文件: 例如 `systemctl cat ssh`显示ssh.service
 ```
 # /lib/systemd/system/ssh.service
 [Unit]
@@ -229,13 +233,17 @@ Type=notify
 WantedBy=multi-user.target
 Alias=sshd.service
 ```
-配置文件分成几个区块，每个区块的第一行，是用方括号表示的区别名，比如[Unit]。注意，配置文件的区块名和字段名，都是大小写敏感的。
-每个区块包含若干条键值对。
+
+配置文件分成几个区块. 每个区块的第一行是用方括号表示的区别名(比如[Unit])
+
+**注意** 配置文件的区块名和字段名都是大小写敏感的
+
+每个区块包含若干条键值对. 
 **键值对的等号两侧不能有空格**
 
    1. `[Unit]`：启动顺序与依赖关系
 
-用来定义 Unit 的元数据，以及配置与其他 Unit 的关系。它的主要字段:
+用来定义Unit的元数据,以及配置与其它Unit的关系. 它的主要字段:
    * Description：简短描述
    * Documentation：文档地址
    * Requires：当前 Unit 依赖的其他 Unit，如果它们没有运行，当前 Unit 会启动失败
@@ -249,42 +257,42 @@ Alias=sshd.service
 
    2. `[Service]` 定义如何启动当前服务
 
-用来 Service 的配置，只有 Service 类型的 Unit 才有这个区块。它的主要字段:
+用来 Service 的配置, 只有 Service 类型的 Unit 才有这个区块. 它的主要字段:
 
-   Type：定义启动时的进程行为。它有以下几种值。
-     Type=simple：默认值，执行ExecStart指定的命令，启动主进程
-     Type=forking：ExecStart字段将以fork()方式启动，此时父进程将会退出，子进程将成为主进程
-     Type=oneshot：类似于simple，但只执行一次，Systemd 会等它执行完，才启动其他服务
-     Type=dbus：当前服务通过D-Bus启动
-     Type=notify：类似于simple，启动结束后会发出通知信号，然后 Systemd 再启动其他服务
-     Type=idle：若有其他任务执行完毕，当前服务才会运行
-   ExecStart：启动当前服务的命令
-   ExecStartPre：启动当前服务之前执行的命令
-   ExecStartPost：启动当前服务之后执行的命令
-   ExecReload：重启当前服务时执行的命令
-   ExecStop：停止当前服务时执行的命令
-   ExecStopPost：停止当其服务之后执行的命令
+   * Type：定义启动时的进程行为。它有以下几种值。
+      * Type=simple：默认值，执行ExecStart指定的命令，启动主进程
+      * Type=forking：ExecStart字段将以fork()方式启动，此时父进程将会退出，子进程将成为主进程
+      * Type=oneshot：类似于simple，但只执行一次，Systemd 会等它执行完，才启动其他服务
+      * Type=dbus：当前服务通过D-Bus启动
+      * Type=notify：类似于simple，启动结束后会发出通知信号，然后 Systemd 再启动其他服务
+      * Type=idle：若有其他任务执行完毕，当前服务才会运行
+   * ExecStart：启动当前服务的命令
+   * ExecStartPre：启动当前服务之前执行的命令
+   * ExecStartPost：启动当前服务之后执行的命令
+   * ExecReload：重启当前服务时执行的命令
+   * ExecStop：停止当前服务时执行的命令
+   * ExecStopPost：停止当其服务之后执行的命令  
    所有的启动设置之前，都可以加上一个连词号`-`，表示"抑制错误"，即发生错误的时候，不影响其他命令的执行。
-   RestartSec：自动重启当前服务间隔的秒数
-   Restart：定义何种情况 Systemd 会自动重启当前服务，可能的值包括always（总是重启）、on-success、on-failure、on-abnormal、on-abort、on-watchdog
-   TimeoutSec：定义 Systemd 停止当前服务之前等待的秒数
-   Environment：指定环境变量
-   `EnvironmentFile`：指定当前服务的环境参数文件。该文件内部的key=value键值对，可以用$key的形式，在当前配置文件中获取。
-   `KillMode`：定义 Systemd 如何停止 sshd 服务。KillMode字段可以设置的值如下。
-    `control-group`（默认值）：当前控制组里面的所有子进程，都会被杀掉
-    `process`：只杀主进程
-    `mixed`：主进程将收到 SIGTERM 信号，子进程收到 SIGKILL 信号
-    `none`：没有进程会被杀掉，只是执行服务的 stop 命令。
-`Restart`：定义了退出后，Systemd的重启方式。
+   * RestartSec：自动重启当前服务间隔的秒数
+   * Restart：定义何种情况 Systemd 会自动重启当前服务，可能的值包括always（总是重启）、on-success、on-failure、on-abnormal、on-abort、on-watchdog
+   * TimeoutSec：定义 Systemd 停止当前服务之前等待的秒数
+   * Environment：指定环境变量
+   * `EnvironmentFile`：指定当前服务的环境参数文件。该文件内部的key=value键值对，可以用$key的形式，在当前配置文件中获取。
+   * `KillMode`：定义 Systemd 如何停止 sshd 服务。KillMode字段可以设置的值如下。
+   * `control-group`（默认值）：当前控制组里面的所有子进程，都会被杀掉
+   * `process`：只杀主进程
+   * `mixed`：主进程将收到 SIGTERM 信号，子进程收到 SIGKILL 信号
+   * `none`：没有进程会被杀掉，只是执行服务的 stop 命令。
+   * `Restart`：定义了退出后，Systemd的重启方式。
 上面的例子中，Restart设为on-failure，表示任何意外的失败，就将重启sshd。如果 sshd 正常停止（比如执行systemctl stop命令），它就不会重启。
-Restart字段可以设置的值如下。
-    `no`（默认值）：退出后不会重启
-    `on-success`：只有正常退出时（退出状态码为0），才会重启
-    `on-failure`：非正常退出时（退出状态码非0），包括被信号终止和超时，才会重启
-    `on-abnormal`：只有被信号终止和超时，才会重启
-    `on-abort`：只有在收到没有捕捉到的信号终止时，才会重启
-    `on-watchdog`：超时退出，才会重启
-    `always`：不管是什么退出原因，总是重启
+可以设置的值如下。
+       * `no`（默认值）：退出后不会重启
+       * `on-success`：只有正常退出时（退出状态码为0），才会重启
+       * `on-failure`：非正常退出时（退出状态码非0），包括被信号终止和超时，才会重启
+       * `on-abnormal`：只有被信号终止和超时，才会重启
+       * `on-abort`：只有在收到没有捕捉到的信号终止时，才会重启
+       * `on-watchdog`：超时退出，才会重启
+       * `always`：不管是什么退出原因，总是重启
     对于守护进程，推荐设为on-failure。对于那些允许发生错误退出的服务，可以设为on-abnormal。
 
 
@@ -333,21 +341,21 @@ After=basic.target rescue.service rescue.target
 AllowIsolate=yes
 ```
 
-`Requires`字段：要求basic.target一起运行。
-`Conflicts`字段：冲突字段。如果rescue.service或rescue.target正在运行，multi-user.target就不能运行，反之亦然。
-`After`：表示multi-user.target在basic.target 、 rescue.service、 rescue.target之后启动，如果它们有启动的话。
-`AllowIsolate`：允许使用systemctl isolate命令切换到multi-user.target。
+   * `Requires`字段：要求basic.target一起运行。
+   * `Conflicts`字段：冲突字段。如果rescue.service或rescue.target正在运行，multi-user.target就不能运行，反之亦然。
+   * `After`：表示multi-user.target在basic.target 、 rescue.service、 rescue.target之后启动，如果它们有启动的话。
+   * `AllowIsolate`：允许使用systemctl isolate命令切换到multi-user.target。
 
 ## 如何使用 systemd 中的定时器
 systemd timers可以实现定时执行任务.(vs cron jobs)
 
 ### 准备
-`man systemd.service`
-`man systemd.timer`
-`man systemd.target`
+   * `man systemd.service`
+   * `man systemd.timer`
+   * `man systemd.target`
 
 ### 任务
-每个1小时运行脚本 /home/linux/jobscheduler
+每个1小时运行脚本 `/home/linux/jobscheduler`
 
 ### 步骤
    1. 创建service文件 `/etc/systemd/system/js.service`
