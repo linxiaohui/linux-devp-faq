@@ -1,6 +1,8 @@
 # 编写内核模块
 
-## 示例(HelloWorld模块)
+## 示例
+HelloWorld模块
+
 ### 代码
 ```c
 #include <linux/module.h>
@@ -642,4 +644,5 @@ module_exit(reverse_exit);
 通常，内核里面代码的性能会更好，但是对于许多项目而言，这点性能丢失并不严重。
 
 ## 参考资料
-[BE A KERNEL HACKER](https://www.linuxvoice.com/be-a-kernel-hacker/)
+   1. [BE A KERNEL HACKER](https://www.linuxvoice.com/be-a-kernel-hacker/)
+   2. [The Linux Kernel Module Programming Guide](http://www.tldp.org/LDP/lkmpg/2.6/html/)
