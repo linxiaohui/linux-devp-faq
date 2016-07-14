@@ -25,8 +25,8 @@ char *strsignal(int sig);
 ## signal调用
 早期的Linux使用系统调用 signal 来安装信号
 
-#include <signal.h>
 ```c
+#include <signal.h>
 void (* signal(int signum, void (* handler))(int)))(int);
 ```
 该函数有两个参数, signum指定要安装的信号, handler指定信号的处理函数. 该函数的返回值是一个函数指针, 指向上次安装的handler

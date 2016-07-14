@@ -89,5 +89,3 @@ automake: automake将Makefile.am中定义的结构建立Makefile.in，然后conf
 
 10.make编译
 make dist
-
-## 总结
