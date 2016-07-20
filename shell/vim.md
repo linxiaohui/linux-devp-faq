@@ -1,5 +1,8 @@
 #vim
 
+## 配置文件
+[配置文件示例](./_vimrc)
+
 ## 替换
 `:ranges/pat1/pat2/g`
    * range 是命令执行范围的指定

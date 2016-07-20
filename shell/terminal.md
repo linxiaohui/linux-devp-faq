@@ -26,8 +26,8 @@
 
 例如可以使用`echo 1 > /dev/tty1 ` 或 `echo 2 > /dev/pts/1 `直接显示消息到终端上去，可以将消息输出到别的控制台上去。
 ```bash
-for cons in `w | grep $LOGNAME | awk '{printf("/dev/%s\n", $2)}'`; 
-do echo "TEST" > $cons; 
+for cons in `w | grep $LOGNAME | awk '{printf("/dev/%s\n", $2)}'`;
+do echo "TEST" > $cons;
 done
 ```
 ## Server refused to allocate pty
@@ -41,7 +41,7 @@ mount /dev/pts
 ```
 
 ## ANSI颜色汇总
-要在终端输出带颜色的内容时，可以使用ANSI颜色设定。 
+要在终端输出带颜色的内容时，可以使用ANSI颜色设定。
    * `\033[#m` 为样式
    * `\033[3#m` 为前景色
    * `\033[4#m` 为背景色
@@ -80,13 +80,54 @@ mount /dev/pts
 ```
 
 ## tput改变echo的颜色
-```shell
-GREEN=$(tput setaf 2; tput bold)
+
+示例
+```bash
+#tput Color Capabilities:
+#tput setab [1-7] :  Set a background color using ANSI escape
+#tput setb [1-7] :  Set a background color
+#tput setaf [1-7] :  Set a foreground color using ANSI escape
+#tput setf [1-7] :  Set a foreground color
+#tput Text Mode Capabilities:
+#tput bold :  Set bold mode
+#tput dim :  turn on half-bright mode
+#tput smul :  begin underline mode
+#tput rmul :  exit underline mode
+#tput rev :  Turn on reverse mode
+#tput smso :  Enter standout mode (bold on rxvt)
+#tput rmso :  Exit standout mode
+#tput sgr0 :  Turn off all attributes
+#Color Code for tput:
+#0 :  Black
+#1 :  Red
+#2 :  Green
+#3 :  Yellow
+#4 :  Blue
+#5 :  Magenta
+#6 :  Cyan
+#7 :  White
+
 NORMAL=$(tput sgr0)
-function green() { 
-echo -e "$GREEN$*$NORMAL" 
+GREEN=$(tput setaf 2; tput bold)
+YELLOW=$(tput setaf 3)
+RED=$(tput setaf 1)
+function red() {
+echo -e "$RED$*$NORMAL"
 }
+function green() {
+echo -e "$GREEN$*$NORMAL"
+}
+function yellow() {
+echo -e "$YELLOW$*$NORMAL"
+}
+# To print success
 green "Task has been completed"
+# To print error
+red "The configuration file does not exist"
+# To print warning
+yellow "You have to use higher version."
 ```
+
+**说明**
    * man tput   
    * man 5 terminfo   
