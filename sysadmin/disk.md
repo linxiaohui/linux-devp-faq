@@ -15,7 +15,3 @@
 ## 查看引起`device busy`的进程
    `fuser /path_to_dir`
 
-## 集群监控工具
-http://ganglia.info/
-
-http://www.nagios.org/

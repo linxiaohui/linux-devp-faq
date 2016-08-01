@@ -1,7 +1,7 @@
 #vim
 
 ## 配置文件
-[配置文件示例](./_vimrc)
+[配置文件示例](./vimrc.txt)
 
 ## 替换
 `:ranges/pat1/pat2/g`

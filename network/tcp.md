@@ -12,7 +12,7 @@ TCP的特点:
 
 ## TCP报文
 
-![TCP报文头格式](./TCP-Header.gif)
+![TCP报文头格式](./TCP-Header.jpg)
 
 ## TCP连接的建立和断开
 

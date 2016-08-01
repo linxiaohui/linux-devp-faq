@@ -68,7 +68,8 @@ void buf_error_callback(struct bufferevent * bev, short what, void * arg)
 
 /*
 当接受连接时调用此函数. 接受到客户端的连接, 添加客户端套接字信息和一个 bufferevent 结构,
-在事件结构中为客户端套接字上的读/写/错误事件添加回调函数; 作为参数传递客户端结构(和嵌入的 eventbuffer 和客户端套接字).
+在事件结构中为客户端套接字上的读/写/错误事件添加回调函数; 
+作为参数传递客户端结构(和嵌入的 eventbuffer 和客户端套接字).
 每当对应的客户端套接字包含读、写或错误操作时，调用对应的回调函数.
 */
 void accept_callback(int fd, short ev, void * arg)
@@ -393,7 +394,8 @@ struct bufferevent {
     struct event ev_write;  
     struct evbuffer * input;  
     struct evbuffer * output;                                                                                  
-    bufferevent_data_cb readcb;                                                                                                                 bufferevent_data_cb writecb;
+    bufferevent_data_cb readcb; 
+    bufferevent_data_cb writecb;
     bufferevent_event_cb errorcb;  
 };
 ```
@@ -454,7 +456,7 @@ ev_timer timeout_watcher;
 static void stdin_cb (EV_P_ ev_io * w, int revents)
 {
   puts ("stdin ready");
-  //for one-shot events, one must manually stop the watcher with its corresponding stop function.
+  //for one-shot events, must manually stop the watcher with its corresponding stop function.
   ev_io_stop (EV_A_ w);
   //this causes all nested ev_run's to stop iterating
   ev_break (EV_A_ EVBREAK_ALL);

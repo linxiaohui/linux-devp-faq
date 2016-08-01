@@ -54,7 +54,8 @@ int main()
 ```
 080482e0 <puts@plt>:
  80482e0:	ff 25 0c a0 04 08    	jmp    *0x804a00c
- 80482e6:	68 00 00 00 00       	push   $0x0   ; puts 在GOT里的偏移,以便在函数定位完成后将函数的实际地址写到GOT这个位置
+ ; puts 在GOT里的偏移,以便在函数定位完成后将函数的实际地址写到GOT这个位置
+ 80482e6:	68 00 00 00 00       	push   $0x0
  80482eb:	e9 e0 ff ff ff       	jmp    80482d0 <_init+0x28>
 ```
 
@@ -90,7 +91,7 @@ Breakpoint 1 at 0x804841c: file hello.c, line 4.
    0xf7fedf02:	push   %edx
    0xf7fedf03:	mov    0x10(%esp),%edx ; 0x804a004
    0xf7fedf07:	mov    0xc(%esp),%eax  ; 0x00
-   0xf7fedf0b:	call   0xf7fe76e0   ; 这个函数中应该找到了puts函数的地址, 并将其放入EAX中(_dl_fixup)
+   0xf7fedf0b:	call   0xf7fe76e0 ; 这个函数中应该找到了puts函数的地址, 并将其放入EAX中(_dl_fixup)
    0xf7fedf10:	pop    %edx
    0xf7fedf11:	mov    (%esp),%ecx
    0xf7fedf14:	mov    %eax,(%esp) ; 作为_dl_runtime_resolve的返回地址, 即 ret后进入puts

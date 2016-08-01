@@ -12,8 +12,8 @@
    * 默认搜索路径可以使用 `ld --verbose | grep -i search_dir` 查看  
 
 **案例分析**   
-一次在编译项目代码时，有个文件报错`sqrt`函数没有声明，但该源文件中有`#include <math.h>`。
-使用`gcc -E`查看预编译后的结果发现没有sqrt等函数的声明，显然不是标准库头文件。
+一次在编译项目代码时，有个文件报错`sqrt`函数没有声明，但该源文件中有`#include <math.h>`。  
+使用`gcc -E`查看预编译后的结果发现没有`sqrt`等函数的声明，显然不是标准库头文件。  
 后检查发现，Makefile编译命令中`-I`指定的路径中有第三方库的`math.h`，但其声明的函数等与标准库无关，因此导致错误。    
 
 由此案例可以看出GCC编译时将警告作为错误（GCC参数`-Werror`）以及适当提高GCC编译的警告级别对程序的正确性有很大的帮助。
@@ -21,7 +21,7 @@
 
 ## 编译时检查32位/64位的方式
 例如`__WORDSIZE`的定义（在`/usr/include/gnu/stubs.h`里）
-```
+```c
 #if defined __x86_64__
 # define __WORDSIZE	64
 # define __WORDSIZE_COMPAT32	1
@@ -36,9 +36,9 @@
 BUILDINFO;
 ```
 在Makefile中    
-```makefile
-buildinfo="const char buildinfo[]=\"`cat ~/.baseline` Built on `uname -n` by `id -un` at `date`\""
-gcc -DBUILDINFO=$(buildinfo) src.c
+```bash
+build="const char buildinfo[]=\"`cat ~/.baseline` Built on `uname -n` by `id -un` at `date`\""
+gcc -DBUILDINFO=$(build) src.c
 ```
 这样在结果文件里就定义了buildinfo字符数组，其值为运行make时的shell命令生成的内容。可以使用`strings`命令查看。
 
@@ -53,7 +53,8 @@ gcc -DBUILDINFO=$(buildinfo) src.c
 `fd = open("./test_file",O_LARGEFILE|O_APPEND|O_RDWR,0666);`    
 
 **备注**： 解决方式2在AIX上也是适用的； AIX上使用C标准库读写大文件应使用`fopen64`打开文件。    
-**备注**： 如若需要在64位系统64位程序中限制日志文件的大小，可以考虑`ulimit -f`。但是需要注意其影响，这种情况下若文件读写大于`ulimit -f`会产生`SIGXFSZ`信号。    
+**备注**： 如若需要在64位系统64位程序中限制日志文件的大小，可以考虑`ulimit -f`。
+但是需要注意其影响: 这种情况下若文件读写大于`ulimit -f`会产生`SIGXFSZ`信号，该信号默认终结进程。    
 
 **案例分析**   
 关于日志文件的大小

@@ -11,30 +11,32 @@ autoctools是一个用于生成可以自动地配置软件源代码包以适应�
 autoscan (autoconf): 扫描源代码以搜寻普通的可移植性问题，比如检查编译器，库，头文件等，生成文件configure.scan
      这个操作的主要做用是扫描目录及其子目录生成通用的configure.scan，以及autoscan.log。
      configure.scan主要包含（参考Autotools上手指南）
-     * 1). 产生configure脚本的相关宏
-     * 2). 检测程序相关选项的宏
-     * 3). 检测库的宏
-     * 4). 检测头文件的宏
-     * 5). 检测  typedefs, structures, and compiler characteristics 的宏
-     * 6). 检测库函数的宏
-2.修改configure.scan
-    加入用户自定义的一些宏或是修改一些宏，将其重命名为configure.ac。
-    加入AM_INIT_AUTOMAKE来初始化automake，修改AC_CONFIG_FILES（[Makefile src/Makefile]).
-```
-增加
-AC_INIT([_packname_], [_version_], [_email_])设置包的名字，版本和作者信息
-AMINIT_AUTOMAKE需要生成automake文件
-在执行configure.in之前，需要引入libtools，在configure.in里增加
-AC_PROG_LIBTOOL
+   * 1). 产生configure脚本的相关宏
+   * 2). 检测程序相关选项的宏
+   * 3). 检测库的宏
+   * 4). 检测头文件的宏
+   * 5). 检测  typedefs, structures, and compiler characteristics 的宏
+   * 6). 检测库函数的宏
+2.修改configure.scan, 加入用户自定义的一些宏或是修改一些宏，将其重命名为configure.ac。
+   * 加入`AM_INIT_AUTOMAKE`来初始化automake，修改`AC_CONFIG_FILES`（[Makefile src/Makefile]).
+   * 增加`AC_INIT([_packname_], [_version_], [_email_])`设置包的名字，版本和作者信息
+
+
 检查库文件
-PKG_CHECK_MODULES([LIBEVENT],[libevent]) 使用pkg-config来检测是否存在libevent库，并保存在LIBEVENT相关参数保存在Makefile里，这些是可以用pkg-config命令获取的
+`PKG_CHECK_MODULES([LIBEVENT],[libevent])`
+ 使用pkg-config来检测是否存在libevent库，并保存在LIBEVENT相关参数保存在Makefile里，这些是可以用pkg-config命令获取的
+
 (Makefile中)
+```
 LIBEVENT_LIBS = -levent
 LIBEVENT_CFLAGS =
-如果库文件没有pkg-config接口，可以用下列的方式指定库函数的位置
-AC_ARG_WITH(crypto, [AS_HELP_STRING([--with-crypto],[with crypto library])], [WITH_CRYPTO="$withval"], [WITH_CRYPTO="-lcrypto"])
-这样如果在configure时带了参数--with-crypto xxx, 则WITH_CRYPTO参数就设定为xxx，否则为-lcrypto，这个参数可以在Makefile.am里使用，并反馈到Makefile里
 ```
+如果库文件没有pkg-config接口，可以用下列的方式指定库函数的位置
+`AC_ARG_WITH(crypto, [AS_HELP_STRING([--with-crypto],[with crypto library])], [WITH_CRYPTO="$withval"], [WITH_CRYPTO="-lcrypto"])`
+这样如果在`configure`时带了参数`--with-crypto xxx`, 则WITH_CRYPTO参数就设定为xxx，否则为-lcrypto，
+这个参数可以在Makefile.am里使用，并反馈到Makefile里
+
+
 
 3.运行autoheader,生成config.h.in
 autoheader(autoconf): 根据configure.ac中的某些宏，比如cpp宏定义，运行m4，生成config.h.in
@@ -77,11 +79,12 @@ autoconf:将configure.ac中的宏展开，生成configure脚本。这个过程�
 
 从configure.in生成configure
 打包库的时候，需要在执行configure.in之前，需要引入libtools，在configure.in里增加
-AC_PROG_LIBTOOL
+`AC_PROG_LIBTOOL`
 运行autoconf的过程是一个宏替换的过程，autoconf调用M4处理器来对configure中用的宏进行替换。
 
 7.运行automake,生成Makefile.in
-automake: automake将Makefile.am中定义的结构建立Makefile.in，然后configure脚本将生成的Makefile.in文件转换为Makefile。如果在configure.ac中定义了一些特殊的宏，比如AC_PROG_LIBTOOL，它会调用libtoolize，否则它会自己产生config.guess和config.sub
+automake: automake将Makefile.am中定义的结构建立Makefile.in，然后configure脚本将生成的Makefile.in文件转换为Makefile。
+如果在configure.ac中定义了一些特殊的宏，比如`AC_PROG_LIBTOOL`，它会调用libtoolize，否则它会自己产生`config.guess`和`config.sub`
 
 8.新建gnu的标准文件 AUTHORS   COPYING  NEWS ChangeLog  README.
 

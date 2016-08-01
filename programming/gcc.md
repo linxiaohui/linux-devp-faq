@@ -111,7 +111,8 @@ __attribute__ ((attribute-list))
 
 例如:
 ```c
-extern void die(const char * format, ...)　 __attribute__((noreturn)) __attribute__((format(printf, 1, 2)));
+extern void die(const char * format, ...)　\
+__attribute__((noreturn)) __attribute__((format(printf, 1, 2)));
 //或者写成
 extern void die(const char * format, ...)  __attribute__((noreturn, format(printf, 1, 2)));
 ```

@@ -13,4 +13,4 @@ Linux Development FAQs
 若有异议，请[联系作者](https://github.com/linxiaohui/linux-devp-faq/issues)。    
 
 本书将持续更新。     
-Current VERSION: 0.61 (Draft)
+Current VERSION: 0.62 (Draft)

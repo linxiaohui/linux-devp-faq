@@ -113,10 +113,10 @@ int main()
 ```
 使用`gcc -m32`编译运行, 输出
 ```
-linux@linux-virtual-machine ~ $ ls
-a.out  hello.c  mem.c  p.c  scall.c  scall.s  公共的  模板  视频  图片  文档  下载  音乐  桌面
-linux@linux-virtual-machine ~ $ ./a.out
-The child made a system call 11 linux@linux-virtual-machine ~ $ a.out  hello.c	mem.c  p.c  scall.c  scall.s  公共的  模板  视频  图片	文档  下载  音乐  桌面
+linux@vm ~ $ ls
+a.out  hello.c  mem.c  p.c  scall.c  scall.s
+linux@vm ~ $ ./a.out
+The child made a system call 11 linux@vm ~ $ a.out  hello.c	mem.c  p.c  scall.c  scall.s
 ```
 **说明** 11是execve的系统调用号
 ```
@@ -291,11 +291,11 @@ int main()
 ```
 编译运行,输出
 ```
-linux@linux-virtual-machine ~ $ ls
-a.out  hello.c  mem.c  p.c  r.c  scall.c  scall.s  公共的  模板  视频  图片  文档  下载  音乐  桌面
-linux@linux-virtual-machine ~ $ ./a.out
-a.out  hello.c	mem.c  p.c  r.c  scall.c  scall.s  公共的  模板  视频  图片  文档  下载  音乐  桌面
-Write called with 116, 139992913803792, 116 Write returned with 116 linux@linux-virtual-machine ~ $
+linux@vm ~ $ ls
+a.out  hello.c  mem.c  p.c  r.c  scall.c  scall.s
+linux@vm ~ $ ./a.out
+a.out  hello.c	mem.c  p.c  r.c  scall.c  scall.s
+Write called with 116, 139992913803792, 116 Write returned with 116 linux@vm ~ $
 ```
 
 # 处理系统调用参数
