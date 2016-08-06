@@ -85,6 +85,8 @@ find . \( -path ./xxx -o -path ./yyy \) -prune -o -print
 ## screen
    * 创建会话, 并attach:
 $ screen -S abc
+   * attach 到abc
+$screen -x abc
    * 会话列表:
 $ screen -list
 $ screen -ls

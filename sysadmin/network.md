@@ -78,3 +78,27 @@ net.ipv4.tcp_max_syn_backlog
 ```
 
 ## /dev/tcp 与 /dev/udp
+
+## Linux虚拟IP
+
+   1. 在线配置虚拟IP
+`ifconfig eth0:0 192.168.1.200 netmask 255.255.255.0 up`
+
+   2. 配置文件
+```
+# /etc/sysconfig/network/
+cp ifcfg-eth0 ifcfg-eth0:1
+vi ifcfg-eth0:1
+```
+```
+DEVICE=eth0:1   ---->子接口名
+HWADDR=00:0C:29:45:62:3B
+ONBOOT=yes
+BOOTPROTO=static
+IPADDR=192.168.109.108
+NETMASK=255.255.255.0
+```
+重启网络生效
+```
+service network restart  &
+```

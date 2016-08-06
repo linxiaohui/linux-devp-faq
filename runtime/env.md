@@ -17,7 +17,7 @@
 更多环境变量，参见`man ld.so`或`man ld-linux.so`
 
 ## system函数与LD_PRELOAD变量
-log里会出现 
+log里会出现
 ```
 ERROR: ld.so: object LD_PRELOAD cannot be preloaded: ignored,
 ```
@@ -29,7 +29,7 @@ ERROR: ld.so: object LD_PRELOAD cannot be preloaded: ignored,
 
 ## listen socket总是可读而accept失败
 产生这样的问题一个可能情况是连接数不够导致的，例如服务器接收的TCP连接超过`ulimit -n`允许的打开文件数，
-这时候监听套接字每次select/epoll的时候都返回句柄可读，而accept调用会出现错误`EMFILE`. 
+这时候监听套接字每次select/epoll的时候都返回句柄可读，而accept调用会出现错误`EMFILE`.
 ```
 accept failed. errno:24, errmsg:Too many open files.
 ```
@@ -46,3 +46,39 @@ accept failed. errno:24, errmsg:Too many open files.
 从而socket失败。
 
 
+## TCP/IP参数配置
+`/etc/sysctl.conf` 配置网络参数
+```
+net.ipv4.tcp_wmem = 4096 87380 4161536
+net.ipv4.tcp_rmem = 4096 87380 4161536
+net.ipv4.tcp_mem = 786432 2097152 3145728
+net.ipv4.ip_local_port_range = 1024 65535
+```
+执行`/sbin/sysctl -p`生效
+
+## 最大文件描述符
+Linux内核本身有文件描述符最大值的限制
+   * 系统最大打开文件描述符数  `/proc/sys/fs/file-max`
+   * 进程最大打开文件描述符数 `ulimit -n`
+
+修改`/etc/sysctl.conf`文件，增加`fs.file-max = 1000000`, 修改`/etc/security/limits.conf`，增加
+```
+* hard nofile 1000000
+* soft nofile 1000000
+root hard nofile 1000000
+root soft nofile 1000000
+```
+ **注意**: hard limit不能大于`/proc/sys/fs/nr_open`因此也需要修改`nr_open`
+
+
+查看当前系统使用的打开文件描述符数`cat /proc/sys/fs/file-nr`
+```
+1632 0 1513506
+```
+其中第一个数表示当前系统已分配使用的打开文件描述符数，第二个数为分配后已释放的（目前已不再使用），第三个数等于file-max。
+
+**总结**
+   1. 所有进程打开的文件描述符数不能超过/proc/sys/fs/file-max
+   2. 单个进程打开的文件描述符数不能超过user limit中nofile的soft limit
+   3. nofile的soft limit不能超过其hard limit
+   4. nofile的hard limit不能超过/proc/sys/fs/nr_open
