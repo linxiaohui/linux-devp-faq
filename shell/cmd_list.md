@@ -1,5 +1,8 @@
 #常用命令列表
 
+## lsattr & chattr
+   * 查询/设置文件属性
+   
 ## less
    * Shift+f
 
@@ -265,4 +268,3 @@ coproc: coproc [名称] 命令 [重定向]
 ## lslocks
    * 查看文件锁
    * 注意: `flock`是外部命令, 锁定文件时产生新的进程. 解读lslocks结果时需要注意
-
