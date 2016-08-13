@@ -46,6 +46,13 @@
 在bash4.0以上版本中，如果bash环境开启了globstar设置，那么两个连续的**可以用来递归匹配某目录下所有的文件名。
 shopt -s expand_aliases
 
+## sudo
+   * `/etc/sudoers`
+   * 使用`visudo`, 修改上述文件
+   * 注意`su `与`su - `的区别: 前者只切换用户, 不改变环境变量
+   * 不需要输入密码 `user_name ALL=(ALL) NOPASSWD:ALL`
+   * 定制密码过期时间 `Defaults    env_reset,timestamp_timeout=180`
+
 ## 返回值
 如果bash脚本没有调用`exit 返回值`的话，其最后执行命令的返回值将成为bash脚本的返回值。
    * 0 正确
