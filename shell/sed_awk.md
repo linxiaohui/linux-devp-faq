@@ -11,6 +11,18 @@
          * 注意FTP等方式传输非文本文件需要用BIN模式
 
 注意脚本要保存为UNIX格式，实践中发现DOS格式在一些情况下有问题
+
+例如: DOS格式脚本
+```bash
+APP_HOME=$(pwd)      # /home/app
+echo $APP_HOME/bin
+```
+运行结果为 `/bine/app`
+
+原因: 若脚本格式是DOS格式的, APP_HOME变量的值为 `/home/app\0xd`, 从而$APP_HOME/bin为`/home/app\0xd/bin` 其显示为`/bine/app`.
+
+可以通过查看其变量长度证明该结论.
+
    * dos2unix
    * vim
       * DOS转UNIX `:set fileformat=unix`
