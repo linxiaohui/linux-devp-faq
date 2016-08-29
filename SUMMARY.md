@@ -7,6 +7,7 @@
     * [可执行文件相关属性](programming/check.md)
     * [信号](programming/signal.md)
     * [网络编程](programming/network.md)
+    * [文件相关](programming/file.md)
     * [注意事项](programming/lang.md)
     * [GCC扩展](programming/gcc.md)
     * [第三方库](programming/lib.md)
