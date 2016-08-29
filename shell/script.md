@@ -8,14 +8,15 @@ if list; then list; elif list; then list; ... else list; fi
 ```
 Lists
     A list is a sequence of one or more pipelines separated by one of the operators
-    ;, &, &&, or ||, 
+    ;, &, &&, or ||,
     and optionally terminated by one of
     ;, &, or <newline>.
 ```
 
 ```
-The return status of a pipeline is the exit status of the last command, unless the pipefail option is enabled.
-If  pipefail  is  enabled,  the  pipeline's return  status is 
+The return status of a pipeline is the exit status of the last command,
+unless the pipefail option is enabled.
+If  pipefail  is  enabled,  the  pipeline's return  status is
 the value of the last (rightmost) command to exit with a non-zero status,
 or zero if all commands exit successfully.
 ```

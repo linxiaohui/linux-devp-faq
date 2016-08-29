@@ -52,6 +52,7 @@
     * [性能分析工具](sysadmin/performance.md)
     * [操作系统管理](sysadmin/os.md)
     * [AppArmor](sysadmin/apparmor.md)
+    * [SELinux](sysadmin/selinux.md)
     * [systemd](sysadmin/systemd.md)
 
 * [内核](kernel/READMEmd)

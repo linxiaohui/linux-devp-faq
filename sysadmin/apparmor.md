@@ -7,7 +7,7 @@ AppArmor与程序绑定，而不是用户。假设有一个可执行文件的路
 ## 工作模式
 Apparmor有两种工作模式：`enforcement`、`complain`/learning
    1. enforcement：配置文件里列出的限制条件都会得到执行，并且对于违反这些限制条件的程序会进行日志记录。
-   2. complain ：  配置文件里的限制条件不会得到执行，Apparmor只是对程序的行为进行记录。
+   2. complain ：  配置文件里的限制条件不会得到执行，Apparmor只是对程序的行为进行记录(/var/log/kern.log, /var/log/audit/audit.log, /var/log/apparmor)
 
 ## 资源限制
 ### 文件系统

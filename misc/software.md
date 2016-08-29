@@ -31,15 +31,15 @@ wget ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs11t.h
 
    * 报错`invalid conversion...`
 ```
-Compiling UserInterface.cpp......Application.h: In member function 
-'virtual void TrueCrypt::UserInterface::Test() const':Application.h:1420:118: 
+Compiling UserInterface.cpp......Application.h: In member function
+'virtual void TrueCrypt::UserInterface::Test() const':Application.h:1420:118:
 error: invalid conversion from ‘const wchar_t*’ to ‘wxChar {aka wchar_t}’ [-fpermissive].....
 ```
 根据编译输出的信息文件查看`Main/UserInterface.cpp`有如下的代码
 ```c
   // StringFormatter
  if (StringFormatter (L"{9} {8} {7} {6} {5} {4} {3} {2} {1} {0} 0",
-                       "1", L"2", '3', L'4', 5, 6, 7, 8, 9, 10) 
+                       "1", L"2", '3', L'4', 5, 6, 7, 8, 9, 10)
      != L"10 9 8 7 6 5 4 3 2 1 {0}")
           throw TestFailed (SRC_POS);
 ```
@@ -48,9 +48,9 @@ error: invalid conversion from ‘const wchar_t*’ to ‘wxChar {aka wchar_t}�
 
    * 报错`ambiguous overload ...`
 ```
-Compiling VolumeCreationWizard.cpp......Forms/VolumeSizeWizardPage.h: 
+Compiling VolumeCreationWizard.cpp......Forms/VolumeSizeWizardPage.h:
 In member function 'virtual TrueCrypt::WizardPage* TrueCrypt::VolumeCreationWizard::GetPage
-(TrueCrypt::WizardFrame::WizardStep)':Forms/VolumeSizeWizardPage.h:177:20: 
+(TrueCrypt::WizardFrame::WizardStep)':Forms/VolumeSizeWizardPage.h:177:20:
 error: ambiguous overload for ‘operator=’ (operand types are 'wxString' and
 'TrueCrypt::StringFormatter')
 ```
@@ -83,7 +83,7 @@ freeSpaceText = tfreeSpaceText;
    * wxWidgets-devel-2.8.12
    * libicu
    * libcurl-devel
-   
+
 ## 编译安装
    * `./configure`
    * `make`
@@ -101,4 +101,7 @@ freeSpaceText = tfreeSpaceText;
    * Octave
    * Maxima
    * Python-sympy
-   
+
+## 资源链接
+   * [awesome-linux-software](https://voluong.gitbooks.io/awesome-linux-software/content/)
+   * [awesome-linux-software-zh_cn](https://alim0x.gitbooks.io/awesome-linux-software-zh_cn/content/)
