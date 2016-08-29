@@ -56,12 +56,12 @@ ntpd在实际同步时间时是一点点的校准过来时间的，最终把时�
 CLOCK_REALTIME is affected by settime()/settimeofday() calls and can also be frequency corrected by NTP via adjtimex().
 
 CLOCK_MONOTONIC is not affected by settime()/settimeofday(), but is frequency adjusted by NTP via adjtimex().
-With Linux,NTP normally uses settimeofday() for large corrections (over half a second). 
-The adjtimex() inteface allows for small clock frequency changes (slewing). 
+With Linux,NTP normally uses settimeofday() for large corrections (over half a second).
+The adjtimex() inteface allows for small clock frequency changes (slewing).
 This can be done in a few different ways, see the man page for adjtimex.
 
 CLOCK_MONOTONIC_RAW that will not be modified at all, and will have a linear correlation with the hardware counters.
 ```
 
-   4、syscall(SYS_clock_gettime, CLOCK_MONOTONIC_RAW, &monotonic_time)
+   4. syscall(SYS_clock_gettime, CLOCK_MONOTONIC_RAW, &monotonic_time)
         该函数提供的单调递增时间

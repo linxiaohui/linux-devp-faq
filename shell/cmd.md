@@ -125,6 +125,18 @@ do
     echo $cpuidx
 done
 ```
+## 查看正在运行进程的CPU
+   1. 如果一个进程使用 `taskset` 命令明确的被固定(pinned)到 CPU 的特定内核上, 可以使用 `taskset` 命令找出被固定的 CPU 内核  
+      * `taskset -c -p <pid>`
+   2. `ps` 可以显示每个进程/线程目前分配到的CPU ID(`PSR`列)  
+      * `ps -o pid,psr,comm -p <pid>`
+   3. `top` 命令可以显示 CPU 被分配给哪个进程   
+      * 在`top`中使用`P`选项, 然后按`f`键, 显示中会出现 "Last used CPU" 列. 目前使用的 CPU 内核将出现在 `P`(或`PSR`)列下  
+   4. `htop`
+      * 
+
+
+
 
 ## 检查命令执行是否成功
    * 常见写法

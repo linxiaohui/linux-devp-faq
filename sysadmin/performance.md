@@ -9,7 +9,13 @@ from [Linux Performance Observability Tools by Brendan Gregg](http://www.brendan
    * 系统负载可理解为当前可运行的程序+正在运行的程序+等待 IO 的程序
    * 三个数分别是 1min， 5min 和 15min 的负载平均值
    * 一般情况下这个值越大就说明等待 CPU 的进程越多，如果大于核数就说明有进程在等待 CPU
-   
+
+## 如何查看一个进程的运行时间
+使用 ps 命令来查看关于一组正在运行的进程的信息
+   * `etime`  显示自从该进程启动以来，经历过的时间，格式为 [[DD-]hh:]mm:ss
+   * `etimes` 显示自该进程启动以来，经历过的时间，以秒的形式
+   * `ps -p {PID} -o etime`/`ps -p {PID} -o etimes`
+   * `ps -p {PID} -o pid,cmd,etime,uid,gid`
 
 ## top & htop
    * wa(io wait)
@@ -28,10 +34,10 @@ from [Linux Performance Observability Tools by Brendan Gregg](http://www.brendan
       * 平均处理时间
       * 磁盘带宽利用率等等
    * man iostat
-   
+
 ## vmstat & free
    * vmstat 展示内存整体使用情况的命令
-      * swpd 和 swap 的 in/out 
+      * swpd 和 swap 的 in/out
       * 如果这一部分的数值过大，会频繁的 IO 造成性能下降
       * memory 里的 buffer 指的是写磁盘缓冲区
       * cache 可以当成是读文件的缓冲区。
@@ -72,7 +78,7 @@ systemctl start sysstat
 
 ## ltrace
    * strace跟踪系统调用，ltrace跟踪函数调用
-   
+
 ## tcpdump
    * 网络探嗅工具，将经过网卡的数据包保存下来
    * 开启网卡混杂模式也可以捕获同一网络上其他的数据包
