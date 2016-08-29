@@ -62,6 +62,7 @@
     * [内核数据结构](kernel/struct_link.md)
        * [链表](kernel/struct_link.md)
        * [FIFO](kernel/struct_kfifo.md)
+       * [位图](kernel/struct_bitmap.md)
 
 * [网络](network/README.md)
    * [TCP协议基础](network/tcp.md)
