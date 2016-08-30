@@ -73,6 +73,7 @@
 * [数据库开发](database/README.md)
     * [sybase](database/sybase.md)
     * [DB2](database/db2.md)
+    * [Oracle](database/oracle.md)
 
 * [杂项](misc/README.md)
     * [桌面环境](misc/desktop.md)
