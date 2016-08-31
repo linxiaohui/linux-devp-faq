@@ -230,11 +230,14 @@ bash中--后面的参数不会被当作选项解析.
 
 **备注**: crontab中简洁写法可能无效  
 
-## grep stderr
-**因stderr是不参与pipe的**
+## 管道与标准错误
+**因stderr是不参与pipe的** (仍然会被输出)
 使用  
    * `CMD 2>&1 1>/dev/null | grep XXX` 这样只grep stderr （注意顺序）
    * `CMD 2>&1 | grep XXX ` 同时grep stdout和stderr
+   * `CMD |& grep XXX`  将CMD的标准输出和标准报错都与grep的标准输入连接.
+   * `|&`的写法BASH-3.2不支持; BASH-4.2支持
+   * **注意**, stderr与stdout的输出顺序, 测试发现stderr总是在stdout之前
 
 ## Shell 文件读写
 
@@ -307,8 +310,6 @@ cat tmp
 
 **注意**: `3<>`, `<&3`, `&>3`,`3>&` 均不能有空格
 
-## 管道
-“|&”这种写法的含义是将command1标准输出和标准报错都跟command2的和准输入连
 
 ## 受限的shell
 set -r

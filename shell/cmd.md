@@ -83,26 +83,19 @@ find . \( -path ./xxx -o -path ./yyy \) -prune -o -print
    * 以上方式可以组合使用
 
 ## screen
-   * 创建会话, 并attach:
-$ screen -S abc
-   * attach 到abc
-$screen -x abc
-   * 会话列表:
-$ screen -list
-$ screen -ls
-   * 连接/恢复会话:
-$ screen -r abc
-   * 暂时离开会话, 会话仍在后台运行:
-CTRL+a+d
-   * 停止会话(已连接的情况):
-$ exit  或 ctrl+d
+   * 创建会话, 并attach:  `screen -S abc`
+   * attach 到abc: `screen -x abc`
+   * 会话列表: `screen -list`/`screen -ls`
+   * 连接/恢复会话: `screen -r abc`
+   * 暂时离开会话, 会话仍在后台运行: `CTRL+a+d`
+   * 停止会话(已连接的情况): `exit`/`ctrl+d`
 
 ## tmux
    在一个终端窗口中运行多个终端会话
 
 ## script命令
-script是将终端会话制成打印稿的命令。
-想要script在登录时就生效，可以将其加在shell profile(~/.profile)。
+`script`是将终端会话制成打印稿的命令。
+想要`script`在登录时就生效，可以将其加在shell profile(`~/.profile`)。
 `/usr/bin/script -qa /usr/local/script/log_record_script`
    * 选项-q是安静模式，用户登录时完全不会察觉到script命令的运行。
    * 选项-a是追加，不会覆盖以往的记录。

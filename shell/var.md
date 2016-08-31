@@ -29,23 +29,23 @@ echo ${var,,} abcdefg
 ```
 
 ## 获得脚本名称
-   * 使用`sh test.sh` 或 `./test.sh`的方式运行脚本, $0即为脚本的名字
-   * 使用`source test.sh` 或`. ./test.sh`的方式运行脚本，$0为bash或上层脚本(执行source的脚本)的名字, 此时需要使用${BASH_SOURCE-$0}获取脚本名字.
+   * 使用`sh test.sh` 或 `./test.sh`的方式运行脚本, `$0`即为脚本的名字
+   * 使用`source test.sh` 或`. ./test.sh`的方式运行脚本，`$0`为bash或上层脚本(执行source的脚本)的名字, 此时需要使用`${BASH_SOURCE-$0}`获取脚本名字.
 
 ## 获取变量VAR的长度
-${#VAR}
+`${#VAR}`
 
-## echo $line| awk –F’\t’ 达不到预期效果
-需使用echo "$line” | awk –F’\t’
+## echo $line| awk –F'\t' 达不到预期效果
+需使用`echo "$line” | awk –F'\t'`
 
 ## 变量展开
-   * ${param:+expr} 如果param设置并且不为空，展开expr
-   * URL=${URL:-http://localhost:8080} 如果URL没有设置则设置为http://localhost:8080
-   * var=${var:=1000}  如果var未被赋值，则赋值成1000
+   * `${param:+expr}` 如果param设置并且不为空，展开expr
+   * `URL=${URL:-http://localhost:8080}` 如果URL没有设置则设置为http://localhost:8080
+   * `var=${var:=1000}`  如果var未被赋值，则赋值成1000
 
 ## 检查一个变量是否存在
-   * ${name:?error message}
-   * 如果一个bash的脚本需要一个参数，也许就是这样一个表达式 input_file=${$1:?usage: $0 input_file}。
+   * `${name:?error message}`
+   * 例如: 脚本需要一个参数: `input_file=${$1:?usage: $0 input_file}`
 
 ## 截取字符串
    * `${var%suffix}`   
@@ -85,8 +85,8 @@ remove
 
 ## 变量匹配
 上面的关于变量中`#`,`%`的总结:
-   * ${var#PATTERN}, ${var##PATTERN} 从var的开头删除最短/最长匹配PATTERN的字串
-   * ${var%PATTERN}, ${var%%PATTERN} 从var的后面删除最短/最长匹配PATTERN的字串
+   * `${var#PATTERN}`, `${var##PATTERN}` 从var的开头删除最短/最长匹配PATTERN的字串
+   * `${var%PATTERN}`, `${var%%PATTERN}` 从var的后面删除最短/最长匹配PATTERN的字串
 
 
 关于变量替换的内容参见 `man bash`
@@ -96,7 +96,7 @@ remove
 `unset LD_TRACE_LOADED_OBJECTS`
 
 ##命令提示符
-PS1环境变量
+`PS1`环境变量
 
 
 ## 数字运算
