@@ -148,30 +148,21 @@ echo b: $b
 
 ```bash
    #!/bin/bash
-
    pid=$$
-
    echo "echo $pid"
    #打开jobs control功能，在没有这个功能suspend无法使用，脚本中默认此功能关闭。
    #我们并不推荐在脚本中开启此功能。
    set -m
-
    echo "Begin!"
-
    echo $-
-
    echo "Enter suspend stat:"
-
    #让一个进程十秒后给本进程发送一个SIGCONT信号
    ( sleep 10 ; kill -18 $pid ) &
    #本进程进入等待
    suspend
-
    echo "Get SIGCONT and continue running."
-
    echo "End!"
 ```
-
 
 ## 函数返回值
 函数的返回值默认是最后一行语句的返回值
@@ -360,3 +351,6 @@ exec 6>&-;
 #关闭socket的输入，输出
 exit 0;
 ```
+
+## 如何在Shell中输入 TAB
+Ctrl+V,Tab

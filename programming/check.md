@@ -2,8 +2,9 @@
 
 ## 如何检查一个库文件或可执行文件是32位的还是64位的
 `file _a.out_` 或者 `file _libX.so_`   
-对于.a的库文件，可以 ar x 解压出成员文件后使用 `file`命令
-   * 使用nm查看.a里面的.o成员的地址长度也可以判断为32位或64位的
+对于.a的库文件，可以 `ar x`解压出成员文件后使用 `file`命令
+   * 使用`nm`查看.a里面的.o成员的地址长度也可以判断为32位或64位的
+   * `objdump -a *.a`
 
 **备注**：    
    * `file -i _textfilename_` 可以显示文件的编码方式     
@@ -52,7 +53,7 @@ $ gcc -Wl,--dynamic-linker,$L/lib/ld-uClibc.so.0 \
 
 ELF文件中`.interp`段为程序的动态加载器:
    * 查看.interp段的内容
-      * `objdump –section=.interp –s ./testapp` 
+      * `objdump –section=.interp –s ./testapp`
       * `readelf –l ./testapp`
 
 静态编译的可执行程序都可以作为动态加载器   
@@ -60,6 +61,4 @@ ELF文件中`.interp`段为程序的动态加载器:
 gcc -static testapp.c -o loader
 gcc -Wl,--dynamic-linker,./loader testapp.c -o testapp
 ```
-**备注**：在BSD 系统上的ldd 是一个ELF程序。
-
-
+**备注**：在FreeBSD 系统上的ldd 是一个ELF程序。
