@@ -6,7 +6,7 @@
 ### 安装vmtools时报错
    * 报错`implicit declaration of vfs_readlink`
    * 报错`implicit declaration of generic_file_aio_write`
-   * VMWare Workstation 10.0.0 build-1295980 && VMwareTools-9.6.0-1294478.tar.gz 
+   * VMWare Workstation 10.0.0 build-1295980 && VMwareTools-9.6.0-1294478.tar.gz
 根据[vmware-tools-patches](https://github.com/rasa/vmware-tools-patches), 下载最新版本的VMWare Tools安装.
 
 ### vmtool安装成功，但是hgfs下没有被挂接共享目录
@@ -40,7 +40,7 @@ Execution aborted.
       1. 删除etc/vmware-tools目录 `rm -rf /etc/vmware-tools`
       2. 删除/tmp/vm* `rm -rf /tmp/vm*`
       3. 重新安装
-     
+
 ## Virtual Box
 
 ### 共享
@@ -65,7 +65,7 @@ Could not open network socket.
 
 
 ## 网络设备的名字
-在VmWare中安装openSUSE, 执行`/sbin/ifconfig`查看网络设备显示: 
+在VmWare中安装openSUSE, 执行`/sbin/ifconfig`查看网络设备显示:
 ```
 eno167777 Link encap:Ethernet  HWaddr XX:XX:XX:XX:XX:XX  
           inet addr:192.168.106.128  Bcast:192.168.106.255  Mask:255.255.255.0
@@ -77,7 +77,7 @@ eno167777 Link encap:Ethernet  HWaddr XX:XX:XX:XX:XX:XX
 
 ## OpenSuSE防火墙的关闭
 ```
-sudo /usr/sbin/SuSEfirewall2 stop 
+sudo /usr/sbin/SuSEfirewall2 stop
 ```
 永远关闭则
 ```
@@ -112,7 +112,16 @@ sudo /usr/sbin/SuSEfirewall2 start
 ## OpenSuSE中服务的启停
    * `service sshd stop`
    * `service sshd start`
-   
-## 启动时报错piix4_smbus: Host SMBus controller not enabled的解决方法 
+
+## 启动时报错piix4_smbus: Host SMBus controller not enabled的解决方法
 ` lsmod | grep piix4 `   
 `echo "blacklist i2c_piix4 " | sudo tee -a /etc/modprobe.d/50-blacklist.conf `
+
+## CentOS 关闭防火墙
+### CentOS 6
+   * `chkconfig iptables on/off`
+   * `service iptables start/stop`
+
+### CentOS 7
+   * `systemctl start/stop firewalld.service`
+   * `systemctl disable/enable firewalld.service`
