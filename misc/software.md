@@ -96,6 +96,14 @@ freeSpaceText = tfreeSpaceText;
 编译`wxMEdit-3.0.2.tar.gz`时报错, 经分析是因为 wxMEdit中使用boost/tr1/unorderd_map等与c++4.8标准库tr1冲突,
 从而导致重复定义。 [patch](wxMEdit-3.0.2.patch)后`./configure && make && make install`
 
+## [QOwnNotes](https://github.com/pbek/QOwnNotes)
+一款记录笔记和待办事项的应用，集成 ownCloud 云服务
+
+## [ownCloud](https://owncloud.org/)
+一款替代 Dropbox, Google Drive和其他类似商业性的网络服务的自由软件,   
+它可以安装在自己的服务器上.   
+它有一个网络界面,提供了文件管理、日历、照片、音乐、文档浏览等等功能.   
+开发者同样提供桌面同步客户端以及移动 APP.  
 
 ## 数值计算和符号计算
    * Octave
