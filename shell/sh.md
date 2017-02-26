@@ -319,6 +319,8 @@ Shell执行命令后，Ctrl+Z挂起程序执行(注意不是到后台执行)，�
 
 一般情况下应该使用`nohup`命令. 通过`strace nohup 命令`可以发现。nohup将标准输入重定向到`/dev/null`, 将标准输出/标准错误重定向到 nohup.out，忽略了SIGHUP信号。
 需要注意的是，nohup命令不会自动把进程变为后台作业，必须使用`&`。
+在当shell中提示了nohup成功后，还需要按终端上键盘任意键退回到shell输入命令窗口，然后通过在shell中输入exit来退出终端
+
 
 # Shell与网络
 Linux有类比较特殊的文件`/dev/[tcp|upd]/host/port` 读取或者写入这类文件, 相当尝试连接`host:port`. 如果主机以及端口存在, 就建立一个socket 连接.
