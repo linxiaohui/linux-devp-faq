@@ -53,6 +53,12 @@ shopt -s expand_aliases
    * 不需要输入密码 `user_name ALL=(ALL) NOPASSWD:ALL`
    * 定制密码过期时间 `Defaults    env_reset,timestamp_timeout=180`
 
+## grep
+如何grep Tab
+   * `grep $'\t' -r .`
+   * `grep 'Ctrl+V,Tab' -r .`
+   
+
 ## 返回值
 如果bash脚本没有调用`exit 返回值`的话，其最后执行命令的返回值将成为bash脚本的返回值。
    * 0 正确
