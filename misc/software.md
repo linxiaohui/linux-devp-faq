@@ -75,6 +75,8 @@ freeSpaceText = tfreeSpaceText;
 ### 运行报错 `Failed to set up a loop device`
 执行`sudo /sbin/modprobe loop`
 
+### 乱码
+参数填写 `utf8`
 
 # wxMEdit
 ## 版本

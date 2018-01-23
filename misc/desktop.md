@@ -65,7 +65,8 @@ sudo echo "blacklist pcspkr" >> /etc/modprobe.d/50-blacklist.conf
 ## 自动登录
    * OpenSUSE 中可以使用yast修改
    * `/etc/sysconfig/displaymanager`
-**说明**: 在使用YAST修改是使用Linux的 inotify机制(通过使用inotidy-tools中的 inotifywait)定位配置文件
+   
+**说明**: 在使用YAST修改时使用Linux的 inotify机制(通过使用inotidy-tools中的 inotifywait)定位配置文件
 ```
 inotifywait -r -m -e CLOST_WRITE /etc
 ```

@@ -125,3 +125,8 @@ sudo /usr/sbin/SuSEfirewall2 start
 ### CentOS 7
    * `systemctl start/stop firewalld.service`
    * `systemctl disable/enable firewalld.service`
+
+## 连接SMB
+  * `smbclient  -L 192.168.1.100`
+  * `sudo mount -t cifs //192.168.1.100/移动磁盘-C /mnt/`
+
