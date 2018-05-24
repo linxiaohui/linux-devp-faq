@@ -20,6 +20,10 @@
 **备注**: 实际上bash遇到名字解析的顺序是: 别名-关键字-函数-內建命令-hash-外部命令
 关于hash `man bash`搜索hash
 
+## 关于别名
+   1. alias别名只在当前shell有效，不能被子shell继承    
+   2. 在交互式模式下，shell的alias扩展功能是打开的，在非交互式模式下alias扩展功能默认是关闭的  
+   3. `shopt -s expand_aliases`
 
 ## 各种方式执行shell脚本的区别
    1. .  _script_ / source _script_
