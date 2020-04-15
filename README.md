@@ -13,5 +13,8 @@ Linux Development FAQs
 需要说明的是本书中参考了大量的资料。由于时间跨度较长等原因，很多资料没有一一注明原作者和出处，这里一并表示感谢。
 若有异议，请[联系作者](https://github.com/linxiaohui/linux-devp-faq/issues)。    
 
-本书将持续更新。     
+
+updates
+=======
+**本书将不再更新**
 Current VERSION: 0.62 (Draft)

@@ -104,3 +104,5 @@ systemctl start sysstat
 ## /proc
    * 诸多的工具都是从/proc中相应的文件中读取信息
    * 可以strace之前的命令查看其从何处读取信息
+   * man proc
+   * find /proc -name ...
